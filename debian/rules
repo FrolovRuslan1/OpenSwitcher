@@ -31,21 +31,12 @@ sbindir := $(OPENSWITCHER_PREFIX)$(prefix)/sbin
 sysconfdir := $(OPENSWITCHER_PREFIX)/etc
 
 override_dh_auto_configure:
-	# ./configure   --prefix=/usr/
 	mkdir -p xkb-switch/build
 	pwd
-	cmake --install-prefix /usr/ -S xkb-switch -B xkb-switch/build
-	dh_auto_configure
-
-# override_dh_auto_build:
-# 	# $(MAKE) 
-# 	$(MAKE) --directory=xkb-switch/build
-# 	$(MAKE) --directory=actkbd
-# 	dh_auto_build
-	
+	cmake --install-prefix /usr -S xkb-switch -B xkb-switch/build
+	dh_auto_configure	
 
 override_dh_auto_install:
-	# $(MAKE) install DESTDIR=$(OPENSWITCHER_PREFIX)
 	$(MAKE) --directory=xkb-switch/build install DESTDIR=$(OPENSWITCHER_PREFIX)
 	mkdir -p $(OPENSWITCHER_PREFIX)/usr/lib/openswitcher/scripts/
 	find scripts/ -type f -name "*.sh" -exec cp -t $(OPENSWITCHER_PREFIX)/usr/lib/openswitcher/scripts/ {} +
@@ -56,9 +47,3 @@ override_dh_auto_install:
 	echo "# actkbd configuration file" > $(sysconfdir)/actkbd.conf
 
 	dh_auto_install
-
-
-# override_dh_auto_clean:
-# 	rm -rf xkb-switch/build
-# 	$(MAKE) --directory=actkbd clean
-# 	dh_auto_clean

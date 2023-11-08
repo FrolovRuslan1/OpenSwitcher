@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
+	echo "Installing /usr/local/lib/openswitcher/scripts/"
+	mkdir -p "/usr/local/lib/openswitcher/scripts/"
+	find "scripts/" -type f -name "*.sh" -exec cp -t "/usr/local/lib/openswitcher/scripts/" {} +
+	find "/usr/local/lib/openswitcher/scripts/" -type f -exec chmod +x {} +
+fi
+
 add_standart_combination() 
 {
     if [ "$1" -eq 1 ]; then
@@ -59,10 +66,25 @@ for file in "${required_files[@]}"; do
 			echo "File $file foud."
 			add_standart_autostart 1
 		fi
-	
+
+	elif [ "$file" = "/etc/bash_completion.d/openswitcher_autocomplete.sh" ]; then
+		if [ ! -f "$file" ]; then
+			echo "File $file not found."
+			echo "Installing /etc/bash_completion.d/openswitcher_autocomplete.sh"
+			if [[ $OPENSWITCHER_INSTALL_WITH_DPKG == 1 ]]; then
+				cp "/usr/lib/openswitcher/scripts/openswitcher_autocomplete.sh" "/etc/bash_completion.d/"
+			else
+				cp "/usr/local/lib/openswitcher/scripts/openswitcher_autocomplete.sh" "/etc/bash_completion.d/"
+			fi
+		else
+			echo "File $file foud."
+		fi
 	fi
 
 done
+
+
+
 
 echo "Verification is complete.
 "

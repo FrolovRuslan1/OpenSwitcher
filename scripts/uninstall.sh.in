@@ -1,7 +1,10 @@
 #!/bin/bash
 
-my_dir="$(dirname "$0")"
-source "$my_dir/header.sh"
+if [[ $OPENSWITCHER_INSTALL_WITH_DPKG == 1 ]]; then
+	source "/usr/lib/openswitcher/scripts/header.sh"
+else
+	source "scripts/header.sh"
+fi
 
 echo "Deleting $sudoerspath"
 sudo rm "$sudoerspath"
@@ -30,6 +33,9 @@ if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	echo "Deleting actkbd"
 	sudo rm -f "$sbindir/actkbd"
 	sudo rm -f "$sysconfdir/actkbd.conf"
+
+	echo "Removing /usr/local/lib/openswitcher/scripts/"
+	sudo rm -rf "/usr/local/lib/openswitcher/scripts/"
 
 fi
 

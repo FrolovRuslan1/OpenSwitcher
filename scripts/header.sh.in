@@ -26,7 +26,7 @@ $OPENSWITCHERUSER ALL = (root) NOPASSWD: $programpath
 "
 
 # Requested files, can be configured yourself
-required_files=("$XDG_CONFIG_HOME/actkbd/actkbd.conf" "$HOME_USER/.xinitrc")
+required_files=("$XDG_CONFIG_HOME/actkbd/actkbd.conf" "$HOME_USER/.xinitrc" "/etc/bash_completion.d/openswitcher_autocomplete.sh")
 
 default_autostart_actkbd="sudo actkbd --daemon --config $XDG_CONFIG_HOME/actkbd/actkbd.conf  &"
 
