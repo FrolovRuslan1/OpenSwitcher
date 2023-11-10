@@ -46,6 +46,7 @@ AC_CONFIG_FILES([scripts/openswitcher.sh], [chmod +x scripts/openswitcher.sh])
 AC_CONFIG_FILES([scripts/input-device-info.sh], [chmod +x scripts/input-device-info.sh])
 AC_CONFIG_FILES([scripts/openswitcher_autocomplete.sh], [chmod +x scripts/openswitcher_autocomplete.sh])
 AC_CONFIG_FILES([scripts/_openswitcher], [chmod +x scripts/_openswitcher])
+AC_CONFIG_FILES([scripts/openswitcher.fish], [chmod +x scripts/openswitcher.fish])
 AC_CONFIG_FILES([doc/openswitcher.1])
 
 AC_CONFIG_FILES([Makefile])

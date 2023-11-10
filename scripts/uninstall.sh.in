@@ -21,8 +21,11 @@ grep -v "$default_autostart_actkbd" "$HOME_USER/.xinitrc" > "/tmp/.xinitrc.tmp" 
 echo "Removing bash completion /etc/bash_completion.d/openswitcher_autocomplete.sh"
 sudo rm -rf "/etc/bash_completion.d/openswitcher_autocomplete.sh"
 
-echo "Removing zsh completion /usr/share/zsh/functions/Completion/X/_openswitcher"
-sudo rm -rf "/usr/share/zsh/functions/Completion/X/_openswitcher"
+echo "Removing fish completion /usr/share/fish/vendor_completions.d/openswitcher.fish"
+sudo rm -rf "/usr/share/fish/vendor_completions.d/openswitcher.fish"
+
+echo "Removing zsh completion /usr/share/zsh/vendor-completions/_openswitcher"
+sudo rm -rf "/usr/share/zsh/vendor-completions/_openswitcher"
 
 if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	echo "Deleting xkb-switch"

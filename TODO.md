@@ -14,7 +14,7 @@
  - [ ] add tests
  - [x] add options
  - [x] rename OPENSWITCHER_INSTALL with local
- - [ ] autoompletion bash zsh sh ...
+ - [x] autoompletion bash zsh sh ...
  - [x] update man
  - [x] add input and output options
  - [x] need translate to english

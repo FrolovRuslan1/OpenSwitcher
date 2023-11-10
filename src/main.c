@@ -514,9 +514,9 @@ int options_handler(int argc, char * const argv[])
 			puts("  -v, --version                  	Print program version.");
 			puts("  -d, --device <path_to_device>  	Specify path to keyboard device. Default is /dev/input/event0");
 			puts("  -i, --input                    	Enable standart input to transform KeySyms to input-event-codes.");
-			puts("	-o, --output                   	Enable standart output to get transformed input-event-codes.");
-			puts("      --verbose                  	Enable verbose mode.");
-			puts("		--debug	                    Enable debug mode.");
+			puts("  -o, --output                   	Enable standart output to get transformed input-event-codes.");
+			puts("      --verbose                   Enable verbose mode.");
+			puts("      --debug                     Enable debug mode.");
 			puts("");
 			puts("See also:");
 			puts("sudo actkbd --help");

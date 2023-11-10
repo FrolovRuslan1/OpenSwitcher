@@ -6,6 +6,7 @@ if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	find "scripts/" -type f -name "*.sh" -exec cp -t "/usr/local/lib/openswitcher/scripts/" {} +
 	find "/usr/local/lib/openswitcher/scripts/" -type f -exec chmod +x {} +
 	find "scripts/" -type f -name "_openswitcher" -exec cp -t "/usr/local/lib/openswitcher/scripts/" {} +
+	find "scripts/" -type f -name "openswitcher.fish" -exec cp -t "/usr/local/lib/openswitcher/scripts/" {} +
 fi
 
 add_standart_combination() 
@@ -72,7 +73,7 @@ for file in "${required_files[@]}"; do
 				echo "File $file foud."
 			fi
 			;;
-		"/usr/share/zsh/functions/Completion/X/_openswitcher")
+		"/usr/share/zsh/vendor-completions/_openswitcher")
 			if [ ! -f "$file" ]; then
 				echo "File $file not found."
 				echo "Installing $file"
@@ -80,6 +81,19 @@ for file in "${required_files[@]}"; do
 					cp "/usr/lib/openswitcher/scripts/_openswitcher" "$file"
 				else
 					cp "/usr/local/lib/openswitcher/scripts/_openswitcher" "$file"
+				fi
+			else
+				echo "File $file foud."
+			fi
+			;;
+		"/usr/share/fish/vendor_completions.d/openswitcher.fish")
+			if [ ! -f "$file" ]; then
+				echo "File $file not found."
+				echo "Installing $file"
+				if [[ $OPENSWITCHER_INSTALL_WITH_DPKG == 1 ]]; then
+					cp "/usr/lib/openswitcher/scripts/openswitcher.fish" "$file"
+				else
+					cp "/usr/local/lib/openswitcher/scripts/openswitcher.fish" "$file"
 				fi
 			else
 				echo "File $file foud."

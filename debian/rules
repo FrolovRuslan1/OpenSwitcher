@@ -41,6 +41,7 @@ override_dh_auto_install:
 	mkdir -p $(OPENSWITCHER_PREFIX)/usr/lib/openswitcher/scripts/
 	find scripts/ -type f -name "*.sh" -exec cp -t $(OPENSWITCHER_PREFIX)/usr/lib/openswitcher/scripts/ {} +
 	find scripts/ -type f -name "_openswitcher" -exec cp -t $(OPENSWITCHER_PREFIX)/usr/lib/openswitcher/scripts/ {} +
+	find scripts/ -type f -name "openswitcher.fish" -exec cp -t $(OPENSWITCHER_PREFIX)/usr/lib/openswitcher/scripts/ {} +
 	find $(OPENSWITCHER_PREFIX)/usr/lib/openswitcher/scripts/ -type f -exec chmod +x {} +
 	
 
