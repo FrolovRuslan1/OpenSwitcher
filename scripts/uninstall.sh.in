@@ -18,6 +18,12 @@ sudo grep -v "$default_combination" "$input_file" | sudo tee "$output_file" && s
 echo "Removing the standard autorun from $HOME_USER/.xinitrc."
 grep -v "$default_autostart_actkbd" "$HOME_USER/.xinitrc" > "/tmp/.xinitrc.tmp" && mv -f "/tmp/.xinitrc.tmp" "$HOME_USER/.xinitrc"
 
+echo "Removing bash completion /etc/bash_completion.d/openswitcher_autocomplete.sh"
+sudo rm -rf "/etc/bash_completion.d/openswitcher_autocomplete.sh"
+
+echo "Removing zsh completion /usr/share/zsh/functions/Completion/X/_openswitcher"
+sudo rm -rf "/usr/share/zsh/functions/Completion/X/_openswitcher"
+
 if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	echo "Deleting xkb-switch"
 	sudo rm /usr/local/bin/xkb-switch
@@ -36,9 +42,7 @@ if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 
 	echo "Removing /usr/local/lib/openswitcher/scripts/"
 	sudo rm -rf "/usr/local/lib/openswitcher/scripts/"
-
 fi
-
 
 echo "Stop actkbd."
 sudo killall actkbd
