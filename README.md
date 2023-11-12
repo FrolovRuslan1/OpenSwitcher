@@ -11,6 +11,7 @@ openswitcher - is a main program of OpenSwitcher project that takes selected tex
 - [Security](#security)
 - [Background](#background)
 - [Install](#install)
+- [Uninstall](#uninstall)
 - [Usage](#usage)
 - [Contributing](#contributing)
 - [License](#license)
@@ -33,6 +34,7 @@ in `/etc/sudoers.d/openswitcher` for correct operation because it works on `evde
 1. `openswitcher` for more information see `openswitcher --help` or `man openswitcher`
 2. `xkb-switch` for more information see `xkb-switch --help` or `man xkb-switch`
 3. `actkbd` for more information see `sudo actkbd --help`
+4. `xsel` for more information see `xsel --help` or `man xsel`
 
 ### Packages for build
 
