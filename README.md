@@ -93,4 +93,4 @@ See [the contributing file](CONTRIBUTING.md)!
 
 ## License
 
-[MIT © Richard McRichface.](../LICENSE)
+GPL
