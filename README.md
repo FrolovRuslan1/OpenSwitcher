@@ -1,7 +1,7 @@
 # OpenSwitcher
 Utility for switching layout of currently selected text
 
-[![license](https://img.shields.io/github/license/:user/:repo.svg)](LICENSE)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)	
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
 openswitcher - is a main program of OpenSwitcher project that takes selected text in standart input and transform it to sequence of keystrokes and emulates it.
@@ -93,4 +93,4 @@ See [the contributing file](CONTRIBUTING.md)!
 
 ## License
 
-GPL
+GPLv3
