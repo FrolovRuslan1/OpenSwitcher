@@ -1,4 +1,9 @@
 // If you read it you shold know that X11 is absolutely old shit please try support to develop new Window Meneger
+/*
+	This is main program of OpenSwitcher project compiled to openswitcher
+	It takes options and standart input selected text if it is pocess text to another keyboard layout
+	after that it emulates keys pressing to print processed text.
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

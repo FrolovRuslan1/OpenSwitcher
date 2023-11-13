@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This is help script for install OpenSwitcher needed packages for build programm
+
 if [ "$distro" = "debian" ]; then
 	# For Debian
 	# Check requested packages 

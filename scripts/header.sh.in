@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This is header for scripts for OpenSwitcher work 
+
 if [[ $OPENSWITCHER_INSTALL_WITH_DPKG == 1 ]]; then
 	programpath=/usr/bin/openswitcher
 else
@@ -28,7 +30,7 @@ $OPENSWITCHERUSER ALL = (root) NOPASSWD: $programpath
 # Requested files, can be configured yourself
 required_files=("$XDG_CONFIG_HOME/actkbd/actkbd.conf" "$HOME_USER/.xinitrc" "/etc/bash_completion.d/openswitcher_autocomplete.sh" "/usr/share/zsh/vendor-completions/_openswitcher" "/usr/share/fish/vendor_completions.d/openswitcher.fish")
 
-default_autostart_actkbd="sudo actkbd --daemon --config $XDG_CONFIG_HOME/actkbd/actkbd.conf  &"
+default_autostart_actkbd="sudo openswitcher --config $XDG_CONFIG_HOME/actkbd/actkbd.conf --device $(input-device-info.sh) --run"
 
 # Activate OpenSwitcher using ctr+alt
 default_combination="# Activate OpenSwitcher

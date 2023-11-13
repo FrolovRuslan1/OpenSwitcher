@@ -1,3 +1,6 @@
+
+# This is fish openswitcher completion
+
 complete -c openswitcher -f -r
 complete -c openswitcher -s h -l help -d 'Display this help message.'
 complete -c openswitcher -s c -l config -F -d 'Specify path to actkbd config. Default is ~/.config/actkbd/actkbd.conf'

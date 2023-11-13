@@ -1,23 +1,29 @@
 #!/bin/bash
 
+# This is script for run when OpenSwitcher uninstalls
+
 if [[ $OPENSWITCHER_INSTALL_WITH_DPKG == 1 ]]; then
 	source "/usr/lib/openswitcher/scripts/header.sh"
 else
 	source "scripts/header.sh"
 fi
 
+# Deleting sudoers OpenSwitcher rule
 echo "Deleting $sudoerspath"
 sudo rm "$sudoerspath"
 
+# Removing the OpenSwitcher standard keyboard shortcut
 echo "Removing the standard keyboard shortcut from $XDG_CONFIG_HOME/actkbd/actkbd.conf."
 input_file="$XDG_CONFIG_HOME/actkbd/actkbd.conf"
 output_file="$XDG_CONFIG_HOME/actkbd/actkbd.conf.tmp"
 
 sudo grep -v "$default_combination" "$input_file" | sudo tee "$output_file" && sudo rm "$input_file" && sudo mv "$output_file" "$input_file"
 
+# Removing the OpenSwitcher standard autorun
 echo "Removing the standard autorun from $HOME_USER/.xinitrc."
 grep -v "$default_autostart_actkbd" "$HOME_USER/.xinitrc" > "/tmp/.xinitrc.tmp" && mv -f "/tmp/.xinitrc.tmp" "$HOME_USER/.xinitrc"
 
+# Removing bash, zsh , fish completions
 echo "Removing bash completion /etc/bash_completion.d/openswitcher_autocomplete.sh"
 sudo rm -rf "/etc/bash_completion.d/openswitcher_autocomplete.sh"
 
@@ -28,6 +34,7 @@ echo "Removing zsh completion /usr/share/zsh/vendor-completions/_openswitcher"
 sudo rm -rf "/usr/share/zsh/vendor-completions/_openswitcher"
 
 if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
+# Deleting xkb-switch
 	echo "Deleting xkb-switch"
 	sudo rm /usr/local/bin/xkb-switch
 	sudo rm /usr/local/lib/libxkbswitch.so.2.0.1
@@ -39,6 +46,7 @@ if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	sbindir="$prefix/sbin"
 	sysconfdir="/etc"
 
+# Deleting actkbd
 	echo "Deleting actkbd"
 	sudo rm -f "$sbindir/actkbd"
 	sudo rm -f "$sysconfdir/actkbd.conf"
@@ -47,5 +55,6 @@ if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	sudo rm -rf "/usr/local/lib/openswitcher/scripts/"
 fi
 
+# Stop actkbd
 echo "Stop actkbd."
 sudo killall actkbd

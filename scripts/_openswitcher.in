@@ -1,8 +1,6 @@
 #compdef openswitcher
 
-# local -a subcmds
-# subcmds=('c:description for c command' 'd:description for d command')
-# _describe 'command' subcmds
+# This is zsh openswitcher completion
 
 _arguments -s \
 '-h[Display this help message.]' \

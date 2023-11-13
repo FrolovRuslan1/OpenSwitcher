@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# This is script for install OpenSwitcher needed files 
+
+# install bash, zsh, fish completion files
 if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	echo "Installing /usr/local/lib/openswitcher/scripts/"
 	mkdir -p "/usr/local/lib/openswitcher/scripts/"
@@ -9,6 +12,7 @@ if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	find "scripts/" -type f -name "openswitcher.fish" -exec cp -t "/usr/local/lib/openswitcher/scripts/" {} +
 fi
 
+# add standart key combination to "$XDG_CONFIG_HOME/actkbd/actkbd.conf"
 add_standart_combination() 
 {
 	if [ ! -f "$file" ]; then
@@ -31,6 +35,7 @@ add_standart_combination()
 	fi    
 }
 
+# add standart actkbd autostart to "$HOME_USER/.xinitrc"
 add_standart_autostart()
 {   
 	if [ ! -f "$file" ]; then

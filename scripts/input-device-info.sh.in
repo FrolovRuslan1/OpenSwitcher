@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
+# input-device-info.sh get current keyboard event device for example "/dev/input/event0" is default for openswitcher
 
-# Somewhat stolen from: <https://unix.stackexchange.com/a/507209>
-# Problem: multiple devices with the same name
+# string name:
 find_event() {
     local lnNo handlers
     local INFO_FILE='/proc/bus/input/devices'

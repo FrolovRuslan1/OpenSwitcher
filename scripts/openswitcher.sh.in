@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This is helping openswitcher script
+
 xkb-switch -n
 sleep 1
 xsel -o | sudo openswitcher --verbose --device "$(input-device-info.sh)"
