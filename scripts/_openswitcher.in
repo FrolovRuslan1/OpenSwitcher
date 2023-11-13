@@ -20,6 +20,8 @@ _arguments -s \
 '-i[Enable standart input to transform KeySyms to input-event-codes.]' \
 '--input[Enable standart input to transform KeySyms to input-event-codes.]' \
 '-o[Enable standart output to get transformed input-event-codes.]' \
+'-p[Print actkbd config.]' \
+'--print[Print actkbd config.]' \
 '--output[Enable standart output to get transformed input-event-codes.]' \
 '--verbose[Enable verbose mode.]' \
 '--debug[Enable debug mode.]'

@@ -515,6 +515,7 @@ int options_handler(int argc, char * const argv[])
 			puts("  -d, --device <path_to_device>  	Specify path to keyboard device. Default is /dev/input/event0");
 			puts("  -i, --input                    	Enable standart input to transform KeySyms to input-event-codes.");
 			puts("  -o, --output                   	Enable standart output to get transformed input-event-codes.");
+			puts("  -p, --print                     Print actkbd config.");
 			puts("      --verbose                   Enable verbose mode.");
 			puts("      --debug                     Enable debug mode.");
 			puts("");
@@ -570,7 +571,7 @@ int options_handler(int argc, char * const argv[])
 					return -1;
 				}
 				
-				size_t command_length = strlen(config_path) + strlen("sudo actkbd --daemon --config  &") + 1;
+				size_t command_length = strlen(config_path) + strlen("sudo actkbd -D -c ") + 1;
 				if (command_length <= 0)
 				{
 					debug("strlen() error");
@@ -583,7 +584,7 @@ int options_handler(int argc, char * const argv[])
 					debug("malloc() error");
 					return -1;
 				}
-				snprintf(command, command_length, "sudo actkbd --daemon --config %s &", config_path);
+				snprintf(command, command_length, "sudo actkbd -D -c %s", config_path);
 
 				if (system(command) != 0)
 				{
@@ -597,7 +598,7 @@ int options_handler(int argc, char * const argv[])
 			{
 				message("Run actkbd");
 
-				size_t command_length = strlen(config_path) + strlen("sudo actkbd --daemon --config  &") + 1;
+				size_t command_length = strlen(config_path) + strlen("sudo actkbd -D -c ") + 1;
 				if (command_length <= 0)
 				{
 					debug("strlen() error");
@@ -609,7 +610,7 @@ int options_handler(int argc, char * const argv[])
 					debug("malloc() error");
 					return -1;
 				}
-				snprintf(command, command_length, "sudo actkbd --daemon --config %s &", config_path);
+				snprintf(command, command_length, "sudo actkbd -D -c %s", config_path);
 
 				if (system(command) != 0)
 				{

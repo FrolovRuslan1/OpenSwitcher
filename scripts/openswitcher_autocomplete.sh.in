@@ -5,7 +5,7 @@ _openswitcher() {
 
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--help --config --run --stop --version --device --input --output --verbose --debug"
+    opts="--help --config --run --stop --version --device --input --output --verbose --debug --print"
 	
 	
 

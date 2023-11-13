@@ -35,7 +35,7 @@ default_combination="# Activate OpenSwitcher
 # To read about how to customise read actkbd documentation
 # To read where is keys see #include <linux/input-event-codes.h>
 # 29=Ctr_L 56=Alt_L
-29+56:::openswitcher.sh"
+29+56:rel:all:openswitcher.sh"
 
 # Requested packages 
 required_packages=("build-essential" "xserver-xorg" "libx11-dev" "libxkbcommon-x11-dev" "libxkbcommon-dev" "libicu-dev" "xsel")

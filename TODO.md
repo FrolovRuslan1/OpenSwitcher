@@ -20,3 +20,4 @@
  - [x] need translate to english
  - [x] add debug option
  - [ ] maybe remake instaling process by using makefile.am
+ - [ ] CONTRIBUTING.md

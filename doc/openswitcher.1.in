@@ -48,6 +48,10 @@
 	Enable standart output to get transformed input-event-codes.
 
 .TP
+\fB-p, --print\fP
+	Print actkbd config.
+
+.TP
 \fB    --verbose\fP
 	Enable verbose mode.
 
