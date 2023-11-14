@@ -1,5 +1,5 @@
 # OpenSwitcher
-Utility for switching layout of currently selected text
+Utility for switching keyboard layout of currently selected text.
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)	
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
@@ -78,14 +78,21 @@ in `/etc/sudoers.d/openswitcher` for correct operation because it works on `evde
 
 ## Make .deb package
 
-1. `git clone -b dev https://github.com/pulkras/OpenSwitcher`
+1. `git clone -b dev https://github.com/FrolovRuslan1/OpenSwitcher`
 2. `cd OpenSwitcher`
 3. `./configure`
 4. `make deb`
 
 ## Docs generating
 
-1.  `sudo apt install doxygen`
+for Debian
+`sudo apt install doxygen`
+
+1. `git clone -b dev https://github.com/FrolovRuslan1/OpenSwitcher`
+2. `cd OpenSwitcher`
+3. `./configure`
+4. `doxygen`
+5. open with browser `doc/html/index.html`
 
 ## Contributing	
 

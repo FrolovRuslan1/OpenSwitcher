@@ -5876,7 +5876,11 @@ ac_config_files="$ac_config_files scripts/openswitcher_autocomplete.sh"
 
 ac_config_files="$ac_config_files scripts/_openswitcher"
 
+ac_config_files="$ac_config_files scripts/openswitcher.fish"
+
 ac_config_files="$ac_config_files doc/openswitcher.1"
+
+ac_config_files="$ac_config_files Doxyfile"
 
 
 ac_config_files="$ac_config_files Makefile"
@@ -6612,7 +6616,9 @@ do
     "scripts/input-device-info.sh") CONFIG_FILES="$CONFIG_FILES scripts/input-device-info.sh" ;;
     "scripts/openswitcher_autocomplete.sh") CONFIG_FILES="$CONFIG_FILES scripts/openswitcher_autocomplete.sh" ;;
     "scripts/_openswitcher") CONFIG_FILES="$CONFIG_FILES scripts/_openswitcher" ;;
+    "scripts/openswitcher.fish") CONFIG_FILES="$CONFIG_FILES scripts/openswitcher.fish" ;;
     "doc/openswitcher.1") CONFIG_FILES="$CONFIG_FILES doc/openswitcher.1" ;;
+    "Doxyfile") CONFIG_FILES="$CONFIG_FILES Doxyfile" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
@@ -7314,6 +7320,7 @@ See \`config.log' for more details" "$LINENO" 5; }
     "scripts/input-device-info.sh":F) chmod +x scripts/input-device-info.sh ;;
     "scripts/openswitcher_autocomplete.sh":F) chmod +x scripts/openswitcher_autocomplete.sh ;;
     "scripts/_openswitcher":F) chmod +x scripts/_openswitcher ;;
+    "scripts/openswitcher.fish":F) chmod +x scripts/openswitcher.fish ;;
 
   esac
 done # for ac_tag

@@ -5,7 +5,7 @@
  - [x] Debug some problems when text replace
  - [ ] add package in apt repository 
  - [x] using autotools for assemblel packeges
- - [ ] add docs information
+ - [x] add docs information
  - [x] need to fix bug when using combination keys. The command dont run immidiatly.
  - [x] add autoswitch to another language on KDE
  - [x] add when instal autorun xbindkeys if nessecary

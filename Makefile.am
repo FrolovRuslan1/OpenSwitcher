@@ -48,6 +48,9 @@ clean-local:
 
 distclean-local: clean
 	rm -rf openswitcher*
+	rm -rf doc/html
+	rm -rf doc/docbook
+	rm -rf doc/searchdata.xml
 
 $(PACKAGE_TARNAME)-$(VERSION).tar.gz: $(bin_PROGRAMS)
 	$(MAKE) dist

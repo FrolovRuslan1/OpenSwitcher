@@ -1,7 +1,10 @@
 // If you read it you shold know that X11 is absolutely old shit please try support to develop new Window Meneger
-/*
+/*!
+	@file
+	@brief This is main program of OpenSwitcher project.
+
 	This is main program of OpenSwitcher project compiled to openswitcher
-	It takes options and standart input selected text if it is pocess text to another keyboard layout
+	It takes options and standart input selected text if it is; process text to another keyboard layout
 	after that it emulates keys pressing to print processed text.
 */
 #include <stdio.h>
@@ -63,10 +66,19 @@ static int debug_flag = 0;
 static int input_flag = 0;
 static int output_flag = 0;
 static char *config_path = "~/.config/actkbd/actkbd.conf";
-// eventX is a keyboard driver, if you want to setup it try sudo evtest
+// eventX is a keyboard driver; if you want to setup it try sudo evtest
 static char* inputDevice = "/dev/input/event0";
 
-
+/*!
+* @brief Main function
+*
+* This function takes options and input selected text and
+* emulates key presses of text.
+*
+* @param argc[in] Count of arguments.
+* @param argv[in] pointer to arguments array of strings.
+* @return 0 if Ok and -1 if error
+*/
 int main(int argc, char * const argv[])
 {
     if (options_handler(argc, argv) != 0)
@@ -149,6 +161,14 @@ int main(int argc, char * const argv[])
     return 0;
 }
 
+/*!
+* @brief read text from stdin
+*
+* This function reads text from the standart input
+* and return this text.
+*
+* @return pointer to the text if Ok or NULL if error
+*/
 uint8_t *read_text_from_stdin()
 {
 	message("read from stdin");
@@ -181,6 +201,14 @@ uint8_t *read_text_from_stdin()
     return text;
 }
 
+/*!
+* @brief transform text to KeySym array
+*
+* This function transform text to KeySym array
+* 
+* @param text[in] pointer to the text that will be transformed
+* @return pointer to KeySym array if Ok or NULL if error
+*/
 KeySym *transform_stdin_to_KeySyms(uint8_t *text)
 {
 	message("transform stdin to KeySyms");
@@ -242,6 +270,15 @@ KeySym *transform_stdin_to_KeySyms(uint8_t *text)
     return arr;
 }
 
+/*!
+* @brief emulate KeySym press
+*
+* This function emulate KeySym press on
+* particular keyboard event driver
+* 
+* @param keysym[in] symbol that will be emulated
+* @return 0 if Ok and -1 if error
+*/
 int send_KeySym(KeySym keysym)
 {
 	message("send KeySym");
@@ -316,6 +353,19 @@ int send_KeySym(KeySym keysym)
     return 0;
 }
 
+/*!
+* @brief send KeyCode to event driver
+*
+* This function sends KeyCode to particular
+* event driver
+* Scancode=keycode-8 is written into input event driver, not the KeyCode !!! 
+* 
+* @param fd[in] event driver file descriptor
+* @param ev[in] pointer to the input_event structure
+* @param value[in] 0 for release, 1 for keypress and 2 for autorepeat.(for keyboard)
+* @param keycode[in] keycode that will be emulated
+* @return 0 if Ok and -1 if error
+*/
 int send_key(int fd, struct input_event *ev, int value, KeyCode keycode)
 {
 	if (output_flag)
@@ -351,6 +401,16 @@ int send_key(int fd, struct input_event *ev, int value, KeyCode keycode)
     return 0;
 }
 
+/*!
+* @brief write event to event driver
+*
+* This function writes event to particular
+* event driver
+* 
+* @param fd[in] event driver file descriptor
+* @param ev[in] pointer to the input_event structure
+* @return 0 if Ok and -1 if error
+*/
 int write_event(int fd, const struct input_event *ev)
 {
 	int ret = write(fd, ev, sizeof(*ev));
@@ -362,6 +422,18 @@ int write_event(int fd, const struct input_event *ev)
 	return 0;
 }
 
+/*!
+* @brief create input_event structere
+*
+* This function creates input_event structere
+* Scancode=keycode-8 is written into input event driver, not the KeyCode !!! 
+* 
+* @param ev[out] pointer to the input_event structure
+* @param type[in] type of event
+* @param code[in] scancode=keycode-8
+* @param value[in] 0 for release, 1 for keypress and 2 for autorepeat.(for keyboard)
+* @return 0 if Ok and -1 if error
+*/
 int create_event(struct input_event *ev, int type, int code, int value)
 {
 	ev->time.tv_sec = 0;
@@ -372,6 +444,15 @@ int create_event(struct input_event *ev, int type, int code, int value)
 	return 0;
 }
 
+/*!
+* @brief append char to the string
+*
+* This function appends char to the string
+* 
+* @param str[in] pointer to the string
+* @param c[in] char that will be appended
+* @return pointer to the string if Ok or NULL if error
+*/
 uint8_t* append_char_to_string(uint8_t* str, uint8_t c)
 {
     int length = strlen((char *)str);
@@ -394,6 +475,16 @@ uint8_t* append_char_to_string(uint8_t* str, uint8_t c)
     return newStr;
 }
 
+/*!
+* @brief transform KeyCode to KeySym
+*
+* This function transforms KeyCode to KeySym
+* 
+* @param display[in] pointer to the X server display
+* @param keycode[in] keycode that will be transformed
+* @param event_mask[in] event_mask that will be applied
+* @return KeySym if Ok or NoSymbol if error
+*/
 KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int event_mask)
 {
     KeySym keysym = NoSymbol;
@@ -461,6 +552,15 @@ KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int event_ma
     return keysym;
 }
 
+/*!
+* @brief process program options
+*
+* This function process program options
+* 
+* @param argc[in] Count of arguments.
+* @param argv[in] pointer to arguments array of strings.
+* @return 0 if Ok and -1 if error
+*/
 int options_handler(int argc, char * const argv[])
 {
 	int c;
@@ -670,6 +770,18 @@ int options_handler(int argc, char * const argv[])
 	return 0;
 }
 
+/*!
+* @brief get prefix from the program path
+*
+* This function gets prefix from the program path
+* example
+* program ls 
+* path /usr/bin/ls
+* prefix=/usr/
+* 
+* @param program[in] program name
+* @return pointer to the prefix if Ok or NULL if error
+*/
 char *get_prefix(const char *program)
 {
     char *which = "which ";
@@ -704,6 +816,14 @@ char *get_prefix(const char *program)
 	return prefix;
 }
 
+/*!
+* @brief print verbose message
+*
+* This function prints message for verbose mode
+* 
+* @param text[in] pointer to the text
+* @return 0 if Ok and -1 if error
+*/
 int message(const char *text)
 {
 	if (verbose_flag)
@@ -716,6 +836,14 @@ int message(const char *text)
 	return 0;
 }
 
+/*!
+* @brief print debug message
+*
+* This function prints message for debug mode
+* 
+* @param text[in] pointer to the text
+* @return 0 if Ok and -1 if error
+*/
 int debug(const char *text)
 {
 	if (debug_flag)
