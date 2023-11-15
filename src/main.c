@@ -140,6 +140,12 @@ int main(int argc, char * const argv[])
             return -1;
         }
 
+		// // Delete previos text
+		// if (send_KeySym(XK_Delete) != 0) 
+		// {
+		// 	debug("send_KeySym() error");
+		// 	return -1;
+		// }
         for (int i = 0; i < length; i++) 
 		{
             if (send_KeySym(arr[i]) != 0) 
@@ -153,7 +159,7 @@ int main(int argc, char * const argv[])
         free(arr);
     } else 
 	{
-        message("No data within 0 seconds.");
+        message("No input data.");
     }
 
     close(epoll_fd);
