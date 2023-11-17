@@ -69,7 +69,8 @@ in `/etc/sudoers.d/openswitcher` for correct operation because it works on `evde
 ### Run in a terminal
 
 1. Select the text
-2.  `xkb-switch -n && xsel | sudo openswitcher --device "$(input-device-info.sh)"`
+2. Change keyboard layout
+3. `xsel -o | sudo openswitcher --emulate --device "$(input-device-info.sh)"`
 
 
 <!-- ## API
