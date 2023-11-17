@@ -37,6 +37,7 @@
 #include <unicode/ustdio.h>
 #include <unicode/utf8.h>
 #include <unicode/uchar.h>
+#include <unicode/utypes.h>
 
 
 #include <linux/input-event-codes.h>
@@ -50,7 +51,7 @@
 
 uint8_t *read_text_from_stdin();
 KeySym *transform_stdin_to_KeySyms(uint8_t *text);
-int send_KeySym(KeySym KeySym);
+int send_KeySym(KeySym keysym);
 int send_key(int fd, struct input_event *ev, int value, KeyCode keycode);
 int create_event(struct input_event *ev, int type, int code, int value);
 int write_event(int fd, const struct input_event *ev);
@@ -60,6 +61,7 @@ int options_handler(int argc, char * const argv[]);
 char *get_prefix(const char *program);
 int message(const char *text);
 int debug(const char *text);
+int count_codepoints(char* utf8_string);
 
 static int verbose_flag = 0;
 static int debug_flag = 0;
@@ -124,7 +126,7 @@ int main(int argc, char * const argv[])
             debug("read_text_from_stdin() error");
             return -1;
         }
-        
+
         KeySym *arr = transform_stdin_to_KeySyms(text);
         if (arr == NULL) 
 		{
@@ -132,15 +134,14 @@ int main(int argc, char * const argv[])
             return -1;
         }
 
-        int32_t length = strlen((char *)text);
-
-        if (length <= 0) 
+		int length = count_codepoints(text);
+		if (length < 0) 
 		{
-            debug("strlen() error");
+            debug("count_code_points() error");
             return -1;
         }
 
-		// // Delete previos text
+		// Delete previos text
 		// if (send_KeySym(XK_Delete) != 0) 
 		// {
 		// 	debug("send_KeySym() error");
@@ -218,15 +219,16 @@ uint8_t *read_text_from_stdin()
 KeySym *transform_stdin_to_KeySyms(uint8_t *text)
 {
 	message("transform stdin to KeySyms");
-    int32_t length = strlen((const char *)text);
-	if (length <= 0)
+    int32_t length =  strlen(text);
+	if (length < 0) 
 	{
-		debug("strlen error");
+		debug("strlen() error");
 		return NULL;
 	}
-    int32_t index = 0;
+	int32_t size = count_code_points(text);
+    
 
-    KeySym *arr = (KeySym *)malloc(sizeof(KeySym)*length);
+    KeySym *arr = (KeySym *)malloc(sizeof(KeySym)*size);
 	if (arr == NULL)
 	{
         debug("malloc error");
@@ -234,24 +236,34 @@ KeySym *transform_stdin_to_KeySyms(uint8_t *text)
     }
 
     UChar32 codepoint;
-    U8_NEXT(text, index, length, codepoint);
+	int32_t index = 0;
+	int32_t offsetIndex = 0;
 
-    while (codepoint > 0) {
-        xkb_keysym_t keysym = xkb_utf32_to_keysym((uint64_t)codepoint);
+	while (offsetIndex < length)
+	{
+		U8_NEXT(text, offsetIndex, length, codepoint);
+		if (codepoint < 0 )
+		{
+			debug("U8_NEXT() error");
+			free(arr);
+            return NULL;
+        }
+		xkb_keysym_t keysym = xkb_utf32_to_keysym((uint64_t)codepoint);
 		if (keysym == XKB_KEY_NoSymbol)
 		{
 			debug("xkb_utf32_to_keysym() error");
+			free(arr);
 			return NULL;
 		}
 		
-        
 		if (verbose_flag == 1)
 		{
 			char buffer[100];
 			
-			if (xkb_keysym_get_name(keysym, buffer, 100) == -1)
+			if (xkb_keysym_get_name(keysym, buffer, 100) < 0)
 			{
 				debug("xkb_keysym_get_name error");
+				free(arr);
 				return NULL;
 			}
 			
@@ -260,18 +272,19 @@ KeySym *transform_stdin_to_KeySyms(uint8_t *text)
 			if (codestr == NULL)
 			{
 				debug("malloc error");
+				free(arr);
+				free(codestr);
 				return NULL;
 			}
 			snprintf(codestr, 15, "U+%04X", codepoint);
-			printf("codepoint: %s ", codestr);
-        	printf("index: %d codepoint: %s name: %s \n", index-1, codestr, codestr);
+        	printf("index: %d codepoint: %s name: %s \n", index, codestr, buffer);
 			free(codestr);
 		}
 
-        // This is expected to be KeySym = xkb_keysym_t
-        arr[index-1] = (KeySym)keysym;	
-        U8_NEXT(text, index, length, codepoint);
-    }
+        // There are expected to be KeySym = xkb_keysym_t
+        arr[index] = (KeySym)keysym;
+		index++;
+	}
 
     return arr;
 }
@@ -286,7 +299,7 @@ KeySym *transform_stdin_to_KeySyms(uint8_t *text)
 * @return 0 if Ok and -1 if error
 */
 int send_KeySym(KeySym keysym)
-{
+{	
 	message("send KeySym");
     Display* display = XOpenDisplay(NULL);
     if (display == NULL)
@@ -317,7 +330,7 @@ int send_KeySym(KeySym keysym)
 		return -1;
 	}  
 
-    message(keysymName);
+    // message(keysymName);
 
     unsigned int event_mask = ShiftMask | LockMask;
 
@@ -856,4 +869,38 @@ int debug(const char *text)
 	perror(text);
 	
 	return 0;
+}
+
+/*!
+* @brief count UChar32 codepoints in string
+*
+* This function count UChar32 codepoints in string
+* 
+* @param utf8_string[in] pointer to string in utf8 that will be counted
+* @return count of codepoints if Ok or -1 if error
+*/
+int count_codepoints(char* utf8_string)
+{
+    UChar32 codepoint;
+    int count = 0;
+    int32_t offsetIndex = 0;
+    int32_t length = strlen(utf8_string);
+	if (length < 0)
+	{
+		debug("strlen() error");
+		return -1;
+	}
+    
+    while (offsetIndex < length)
+	{
+		U8_NEXT(utf8_string, offsetIndex, length, codepoint);
+        if (codepoint < 0 )
+		{
+			debug("U8_NEXT() error");
+            return -1;
+        }
+		count++;
+	} 
+    
+    return count;
 }

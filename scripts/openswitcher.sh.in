@@ -4,4 +4,4 @@
 
 xkb-switch -n
 sleep 1
-xsel -o | sudo openswitcher --verbose --device "$(input-device-info.sh)"
+xsel -o | sudo openswitcher --device "$(input-device-info.sh)"
