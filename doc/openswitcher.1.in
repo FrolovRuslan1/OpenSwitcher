@@ -52,6 +52,10 @@
 	Print actkbd config.
 
 .TP
+\fB-e, --emulate\fP
+	Enable emulation mode. It emulates key presses of KeySyms input.
+
+.TP
 \fB    --verbose\fP
 	Enable verbose mode.
 

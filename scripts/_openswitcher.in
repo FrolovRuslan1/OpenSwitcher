@@ -17,9 +17,11 @@ _arguments -s \
 '--device[Specify path to keyboard device. Default is /dev/input/event0]:path_to_device:_files' \
 '-i[Enable standart input to transform KeySyms to input-event-codes.]' \
 '--input[Enable standart input to transform KeySyms to input-event-codes.]' \
-'-o[Enable standart output to get transformed input-event-codes.]' \
 '-p[Print actkbd config.]' \
 '--print[Print actkbd config.]' \
+'-o[Enable standart output to get transformed input-event-codes.]' \
 '--output[Enable standart output to get transformed input-event-codes.]' \
+'-e[Enable emulation mode. It emulates key presses of KeySyms input.]' \
+'--emulate[Enable emulation mode. It emulates key presses of KeySyms input.]' \
 '--verbose[Enable verbose mode.]' \
 '--debug[Enable debug mode.]'

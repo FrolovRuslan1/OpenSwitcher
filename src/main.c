@@ -65,6 +65,7 @@ int count_codepoints(char* utf8_string);
 
 static int verbose_flag = 0;
 static int debug_flag = 0;
+static int emulae_flag = 0;
 static int input_flag = 0;
 static int output_flag = 0;
 static char *config_path = "~/.config/actkbd/actkbd.conf";
@@ -225,7 +226,7 @@ KeySym *transform_stdin_to_KeySyms(uint8_t *text)
 		debug("strlen() error");
 		return NULL;
 	}
-	int32_t size = count_code_points(text);
+	int32_t size = count_codepoints(text);
     
 
     KeySym *arr = (KeySym *)malloc(sizeof(KeySym)*size);
@@ -390,33 +391,35 @@ int send_key(int fd, struct input_event *ev, int value, KeyCode keycode)
 	if (output_flag)
 	printf("%u ", keycode-8);
 	
-    // keycode differs from scancode by 8
-    // key event
-    if (create_event(ev, EV_KEY, keycode-8, value))
-    {
-        debug("create_event() error");
-        return -1;
-    }
-    
-    if (write_event(fd, ev))
-    {
-        debug("write_event() error");
-        return -1;
-    }
+	if (emulae_flag)
+	{
+		// keycode differs from scancode by 8
+		// key event
+		if (create_event(ev, EV_KEY, keycode-8, value))
+		{
+			debug("create_event() error");
+			return -1;
+		}
+		
+		if (write_event(fd, ev))
+		{
+			debug("write_event() error");
+			return -1;
+		}
 
-    if (create_event(ev, EV_SYN, SYN_REPORT, 0))
-    {
-        debug("create_event() error");
-        return -1;
-    }
-    
-    if (write_event(fd, ev))
-    {
-        debug("write_event() error");
-        return -1;
-    }
-
-
+		if (create_event(ev, EV_SYN, SYN_REPORT, 0))
+		{
+			debug("create_event() error");
+			return -1;
+		}
+		
+		if (write_event(fd, ev))
+		{
+			debug("write_event() error");
+			return -1;
+		}
+	}
+	
     return 0;
 }
 
@@ -599,12 +602,13 @@ int options_handler(int argc, char * const argv[])
 			{"device",		required_argument,	0,				'd'},
 			{"input",		no_argument,		0,				'i'},
 			{"output",		no_argument,		0,				'o'},
+			{"emulate",		no_argument,		0,				'e'},
 			{0, 0, 0, 0}
         };
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "c:hrsptvd:io",
+		c = getopt_long (argc, argv, "c:hrspvd:ioe",
                        long_options, &option_index);
 
 		/* Detect the end of the options. */
@@ -640,6 +644,7 @@ int options_handler(int argc, char * const argv[])
 			puts("  -i, --input                    	Enable standart input to transform KeySyms to input-event-codes.");
 			puts("  -o, --output                   	Enable standart output to get transformed input-event-codes.");
 			puts("  -p, --print                     Print actkbd config.");
+			puts("  -e, --emulate                   Enable emulation mode. It emulates key presses of KeySyms input.");
 			puts("      --verbose                   Enable verbose mode.");
 			puts("      --debug                     Enable debug mode.");
 			puts("");
@@ -758,6 +763,10 @@ int options_handler(int argc, char * const argv[])
 		
 		case 'd':
 			inputDevice = optarg;
+			break;
+
+		case 'e':
+			emulae_flag = 1;
 			break;
 
 		case 'i':
