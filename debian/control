@@ -19,5 +19,5 @@ Depends:
  ${shlibs:Depends},
  ${misc:Depends},
  xsel
-Description: Utility for switching layout of currently selected text
- openswitcher - is a main program of OpenSwitcher project that takes selected text in input and transform it to sequence of keystrokes and emulates it.
+Description: Utility for switching keyboard layout of currently selected text.
+ openswitcher - is a main program of OpenSwitcher project that takes selected text in standart input and transform it to sequence of keystrokes and emulates it.
