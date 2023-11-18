@@ -79,6 +79,6 @@ if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 fi
 
 
-sudo openswitcher --verbose --debug --config "$XDG_CONFIG_HOME/actkbd/actkbd.conf" --device "$(input-device-info.sh)" --run
+sudo openswitcher --config "$XDG_CONFIG_HOME/actkbd/actkbd.conf" --device "$(input-device-info.sh)" --run
 
 echo "Installation is complete."
