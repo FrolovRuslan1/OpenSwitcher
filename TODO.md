@@ -23,4 +23,5 @@
  - [x] CONTRIBUTING.md
  - [ ] need build GUI
  - [ ] need create OpenSwitcher config
- - [ ] fix bug when alt+shift pressed, need more tests
+ - [x] fix bug when alt+shift pressed, need more tests
+ - [ ] add Wyaland support
