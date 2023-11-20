@@ -23,4 +23,7 @@
  - [x] CONTRIBUTING.md
  - [ ] need build GUI
  - [ ] need create OpenSwitcher config
- - [ ] fix bug when alt+shift pressed, need more tests
+ - [x] fix bug when alt+shift pressed, need more tests
+ - [ ] add Wyaland support(xkb-switch doesnt work)
+ - [x] use libconfig to write config
+ - [ ] maybe move doxygen docs in main

@@ -5,8 +5,10 @@
 _arguments -s \
 '-h[Display this help message.]' \
 '--help[Display this help message.]' \
-'-c[Specify path to actkbd config. Default is ~/.config/actkbd/actkbd.conf]:path_to_config:_files' \
-'--config[Specify path to actkbd config. Default is ~/.config/actkbd/actkbd.conf]:path_to_config:_files' \
+'-c[Specify path to openswitcher config. Default is ~/.config/openswitcher/config.cfg]:path_to_config:_files' \
+'--config[Specify path to openswitcher config. Default is ~/.config/openswitcher/config.cfg]:path_to_config:_files' \
+'-k[Specify path to actkbd config. Default is ~/.config/actkbd/actkbd.conf]:path_to_config:_files' \
+'--config-actkbd[Specify path to actkbd config. Default is ~/.config/actkbd/actkbd.conf]:path_to_config:_files' \
 '-r[Run key combination event loop.]' \
 '--run[Run key combination event loop.]' \
 '-s[Stop key combination event loop.]' \
@@ -17,8 +19,10 @@ _arguments -s \
 '--device[Specify path to keyboard device. Default is /dev/input/event0]:path_to_device:_files' \
 '-i[Enable standart input to transform KeySyms to input-event-codes.]' \
 '--input[Enable standart input to transform KeySyms to input-event-codes.]' \
-'-p[Print actkbd config.]' \
-'--print[Print actkbd config.]' \
+'-p[Print openswitcher config.]' \
+'--print[Print openswitcher config.]' \
+'-a[Print openswitcher config.]' \
+'--print-actkbd[Print actkbd config.]' \
 '-o[Enable standart output to get transformed input-event-codes.]' \
 '--output[Enable standart output to get transformed input-event-codes.]' \
 '-e[Enable emulation mode. It emulates key presses of KeySyms input.]' \

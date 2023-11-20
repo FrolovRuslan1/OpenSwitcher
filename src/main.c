@@ -18,6 +18,7 @@
 #include <errno.h>
 #include <time.h>
 #include <getopt.h>
+#include <pwd.h>
 
 
 #include <X11/Xlib.h>
@@ -45,8 +46,10 @@
 #include <linux/keyboard.h>
 
 #include <sys/epoll.h>
+#include <sys/types.h>
 
 #include <config.h>
+#include <libconfig.h>
 
 
 uint8_t *read_text_from_stdin();
@@ -62,15 +65,46 @@ char *get_prefix(const char *program);
 int message(const char *text);
 int debug(const char *text);
 int count_codepoints(char* utf8_string);
+int read_config();
+int setup();
 
-static int verbose_flag = 0;
-static int debug_flag = 0;
-static int emulae_flag = 0;
-static int input_flag = 0;
-static int output_flag = 0;
-static char *config_path = "~/.config/actkbd/actkbd.conf";
-// eventX is a keyboard driver; if you want to setup it try sudo evtest
-static char* inputDevice = "/dev/input/event0";
+struct Options
+{
+	int verbose_flag;
+	int debug_flag;
+	int emulate_flag;
+	int input_flag;
+	int output_flag;
+};
+
+struct Openswitcher
+{
+	struct Options options;
+	char *name;
+	char *version;
+	char *config_path;
+	char *actkbd_config_path;
+	char* input_device;
+};
+
+static struct Openswitcher openswitcher = 
+{
+	.options = {
+		.verbose_flag = 1,
+		.debug_flag = 1,
+		.emulate_flag = 0,
+		.input_flag = 0,
+		.output_flag = 0,
+	},
+	.name = PACKAGE,
+	.version = VERSION,
+	.config_path = "",
+	.actkbd_config_path = "",
+	// eventX is a keyboard driver; if you want to setup it try `sudo evtest`
+	.input_device = "/dev/input/event0"
+};
+
+
 
 /*!
 * @brief Main function
@@ -84,6 +118,12 @@ static char* inputDevice = "/dev/input/event0";
 */
 int main(int argc, char * const argv[])
 {
+	if (setup() != 0)
+	{
+        debug("setup() error");
+        return -1;
+    }
+
     if (options_handler(argc, argv) != 0)
 	{
         debug("options_handler() error");
@@ -116,7 +156,7 @@ int main(int argc, char * const argv[])
 	{
         debug("epoll_wait() error");
         return -1;
-    } else if (num_events > 0 || input_flag) 
+    } else if (num_events > 0 || openswitcher.options.input_flag) 
 	{
 		if (num_events > 0)
 		message("Using input whithout input_flag");
@@ -257,7 +297,7 @@ KeySym *transform_stdin_to_KeySyms(uint8_t *text)
 			return NULL;
 		}
 		
-		if (verbose_flag == 1)
+		if (openswitcher.options.verbose_flag == 1)
 		{
 			char buffer[100];
 			
@@ -317,7 +357,7 @@ int send_KeySym(KeySym keysym)
 	}   
 
 
-    int fd = open(inputDevice, O_WRONLY);
+    int fd = open(openswitcher.input_device, O_WRONLY);
     if (fd == -1)
 	{
         debug("open() error");
@@ -388,10 +428,10 @@ int send_KeySym(KeySym keysym)
 */
 int send_key(int fd, struct input_event *ev, int value, KeyCode keycode)
 {
-	if (output_flag)
+	if (openswitcher.options.output_flag)
 	printf("%u ", keycode-8);
 	
-	if (emulae_flag)
+	if (openswitcher.options.emulate_flag)
 	{
 		// keycode differs from scancode by 8
 		// key event
@@ -591,24 +631,26 @@ int options_handler(int argc, char * const argv[])
     {
       	static struct option long_options[] =
         {
-			{"verbose", no_argument,       		&verbose_flag, 	1},
-			{"debug",		no_argument,		&debug_flag,	1},
-			{"config",  	required_argument, 	0, 				'c'},
-			{"help",    	no_argument,       	0, 				'h'},
-			{"run",     	no_argument,       	0, 				'r'},
-			{"stop",     	no_argument,      	0, 				's'},
-			{"print-config",no_argument, 		0, 				'p'},
-			{"version",		no_argument,		0,				'v'},
-			{"device",		required_argument,	0,				'd'},
-			{"input",		no_argument,		0,				'i'},
-			{"output",		no_argument,		0,				'o'},
-			{"emulate",		no_argument,		0,				'e'},
+			{"verbose", 			no_argument,       	&openswitcher.options.verbose_flag, 	1},
+			{"debug",				no_argument,		&openswitcher.options.debug_flag,	1},
+			{"config",  			required_argument, 	0, 				'c'},
+			{"config-actkbd",		required_argument, 	0, 				'k'},
+			{"help",    			no_argument,       	0, 				'h'},
+			{"run",     			no_argument,       	0, 				'r'},
+			{"stop",     			no_argument,      	0, 				's'},
+			{"print",				no_argument, 		0, 				'p'},
+			{"print-actkbd",		no_argument, 		0, 				'a'},
+			{"version",				no_argument,		0,				'v'},
+			{"device",				required_argument,	0,				'd'},
+			{"input",				no_argument,		0,				'i'},
+			{"output",				no_argument,		0,				'o'},
+			{"emulate",				no_argument,		0,				'e'},
 			{0, 0, 0, 0}
         };
 		/* getopt_long stores the option index here. */
 		int option_index = 0;
 
-		c = getopt_long (argc, argv, "c:hrspvd:ioe",
+		c = getopt_long (argc, argv, "c:k:hrspavd:ioe",
                        long_options, &option_index);
 
 		/* Detect the end of the options. */
@@ -628,25 +670,31 @@ int options_handler(int argc, char * const argv[])
 			break;
 
         case 'c':
-			config_path = optarg;	
+			openswitcher.config_path = optarg;	
+			break;
+
+		case 'k':
+			openswitcher.actkbd_config_path = optarg;	
 			break;
 		
 		case 'h':
 		{
 			puts("Usage: openswitcher [options]");
 			puts("Options:");
-			puts("  -h, --help                     	Display this help message.");
-			puts("  -c, --config <path_to_config>  	Specify path to actkbd config. Default is ~/.config/actkbd/actkbd.conf");
-			puts("  -r, --run                      	Run key combination event loop.");
-			puts("  -s, --stop                     	Stop key combination event loop.");
-			puts("  -v, --version                  	Print program version.");
-			puts("  -d, --device <path_to_device>  	Specify path to keyboard device. Default is /dev/input/event0");
-			puts("  -i, --input                    	Enable standart input to transform KeySyms to input-event-codes.");
-			puts("  -o, --output                   	Enable standart output to get transformed input-event-codes.");
-			puts("  -p, --print                     Print actkbd config.");
-			puts("  -e, --emulate                   Enable emulation mode. It emulates key presses of KeySyms input.");
-			puts("      --verbose                   Enable verbose mode.");
-			puts("      --debug                     Enable debug mode.");
+			puts("  -h, --help                     	        Display this help message.");
+			puts("  -c, --config <path_to_config>  	        Specify path to openswitcher config. Default is ~/.config/openswitcher/config.cfg");
+			puts("  -k, --config-actkbd <path_to_config>  	Specify path to actkbd config. Default is ~/.config/actkbd/actkbd.conf");
+			puts("  -r, --run                      	        Run key combination event loop.");
+			puts("  -s, --stop                     	        Stop key combination event loop.");
+			puts("  -v, --version                  	        Print program version.");
+			puts("  -d, --device <path_to_device>  	        Specify path to keyboard device. Default is /dev/input/event0");
+			puts("  -i, --input                    	        Enable standart input to transform KeySyms to input-event-codes.");
+			puts("  -o, --output                   	        Enable standart output to get transformed input-event-codes.");
+			puts("  -p, --print                             Print openswitcher config.");
+			puts("  -a, --print-actkbd                      Print actkbd config.");
+			puts("  -e, --emulate                           Enable emulation mode. It emulates key presses of KeySyms input.");
+			puts("      --verbose                           Enable verbose mode.");
+			puts("      --debug                             Enable debug mode.");
 			puts("");
 			puts("See also:");
 			puts("sudo actkbd --help");
@@ -663,8 +711,8 @@ int options_handler(int argc, char * const argv[])
 		case 'p':
 		{
 			message("print config from:");
-			message(config_path);
-			size_t command_length = strlen(config_path) + strlen("cat ") + 1;
+			message(openswitcher.config_path);
+			size_t command_length = strlen(openswitcher.config_path) + strlen("cat ") + 1;
 			if (command_length <= 0)
 			{
 				debug("strlen() error");
@@ -676,7 +724,36 @@ int options_handler(int argc, char * const argv[])
 				debug("malloc() error");
 				return -1;
 			}
-			snprintf(command, command_length, "cat %s", config_path);
+			snprintf(command, command_length, "cat %s", openswitcher.config_path);
+
+			if (system(command) != 0)
+			{
+				debug("system() error");
+				free(command);
+				return -1;
+			}
+			
+			free(command);
+			break;
+		}
+
+		case 'a':
+		{
+			message("print config from:");
+			message(openswitcher.actkbd_config_path);
+			size_t command_length = strlen(openswitcher.actkbd_config_path) + strlen("cat ") + 1;
+			if (command_length <= 0)
+			{
+				debug("strlen() error");
+				return -1;
+			}
+			char *command = malloc(command_length);
+			if (command == NULL)
+			{
+				debug("malloc() error");
+				return -1;
+			}
+			snprintf(command, command_length, "cat %s", openswitcher.actkbd_config_path);
 
 			if (system(command) != 0)
 			{
@@ -700,7 +777,7 @@ int options_handler(int argc, char * const argv[])
 					return -1;
 				}
 				
-				size_t command_length = strlen(config_path) + strlen("sudo actkbd -D -c ") + 1;
+				size_t command_length = strlen(openswitcher.actkbd_config_path) + strlen("sudo actkbd -D -c ") + 1;
 				if (command_length <= 0)
 				{
 					debug("strlen() error");
@@ -713,7 +790,7 @@ int options_handler(int argc, char * const argv[])
 					debug("malloc() error");
 					return -1;
 				}
-				snprintf(command, command_length, "sudo actkbd -D -c %s", config_path);
+				snprintf(command, command_length, "sudo actkbd -D -c %s", openswitcher.actkbd_config_path);
 
 				if (system(command) != 0)
 				{
@@ -727,7 +804,7 @@ int options_handler(int argc, char * const argv[])
 			{
 				message("Run actkbd");
 
-				size_t command_length = strlen(config_path) + strlen("sudo actkbd -D -c ") + 1;
+				size_t command_length = strlen(openswitcher.actkbd_config_path) + strlen("sudo actkbd -D -c ") + 1;
 				if (command_length <= 0)
 				{
 					debug("strlen() error");
@@ -739,7 +816,7 @@ int options_handler(int argc, char * const argv[])
 					debug("malloc() error");
 					return -1;
 				}
-				snprintf(command, command_length, "sudo actkbd -D -c %s", config_path);
+				snprintf(command, command_length, "sudo actkbd -D -c %s", openswitcher.actkbd_config_path);
 
 				if (system(command) != 0)
 				{
@@ -762,19 +839,19 @@ int options_handler(int argc, char * const argv[])
 		}
 		
 		case 'd':
-			inputDevice = optarg;
+			openswitcher.input_device = optarg;
 			break;
 
 		case 'e':
-			emulae_flag = 1;
+			openswitcher.options.emulate_flag = 1;
 			break;
 
 		case 'i':
-			input_flag = 1;
+			openswitcher.options.input_flag = 1;
 			break;
 			
 		case 'o':
-			output_flag = 1;
+			openswitcher.options.output_flag = 1;
 			break;
 
         case '?':
@@ -854,7 +931,7 @@ char *get_prefix(const char *program)
 */
 int message(const char *text)
 {
-	if (verbose_flag)
+	if (openswitcher.options.verbose_flag)
 	{
 		int ret = puts(text);
 		if (ret == EOF)
@@ -874,7 +951,7 @@ int message(const char *text)
 */
 int debug(const char *text)
 {
-	if (debug_flag)
+	if (openswitcher.options.debug_flag)
 	perror(text);
 	
 	return 0;
@@ -912,4 +989,120 @@ int count_codepoints(char* utf8_string)
 	} 
     
     return count;
+}
+
+/*!
+* @brief read openswitcher config
+*
+* This function read openswitcher config
+* 
+* @return count of codepoints if Ok or -1 if error
+*/
+int read_config()
+{
+	message("read openswitcher config from:");
+	message(openswitcher.config_path);
+	config_t cfg;
+    config_setting_t *setting;
+    const char *str;
+
+    config_init(&cfg);
+	
+    if (!config_read_file(&cfg, openswitcher.config_path))
+	{
+		debug("config_read_file() error");	
+        fprintf(stderr, "%s:%d - %s\n",
+                config_error_file(&cfg),
+                config_error_line(&cfg),
+                config_error_text(&cfg));
+        config_destroy(&cfg);
+        return -1;
+    }
+
+    setting = config_lookup(&cfg, "openswitcher");
+	if (setting == NULL)
+	{
+		debug("config_lookup() error");
+		return -1;
+	}
+
+	int ret;
+    ret &= config_setting_lookup_string(setting, "name" , 				(const char **)&openswitcher.name);
+	ret &= config_setting_lookup_string(setting, "version", 			(const char **)&openswitcher.version);
+	ret &= config_setting_lookup_string(setting, "config_path", 		(const char **)&openswitcher.config_path);
+	ret &= config_setting_lookup_string(setting, "actkbd_config_path", 	(const char **)&openswitcher.actkbd_config_path);
+	ret &= config_setting_lookup_string(setting, "input_device", 		(const char **)&openswitcher.input_device);
+	if (ret)
+	{
+		debug("config_setting_lookup_string() error");
+		return -1;
+	}
+
+	setting = config_lookup(&cfg, "openswitcher.options");
+	if (setting == NULL)
+	{
+		debug("config_lookup() error");
+		return -1;
+	}
+
+	ret &= config_setting_lookup_bool(setting, "debug_flag", 	&openswitcher.options.debug_flag);
+    ret &= config_setting_lookup_bool(setting, "verbose_flag", 	&openswitcher.options.verbose_flag);
+	ret &= config_setting_lookup_bool(setting, "emulate_flag", 	&openswitcher.options.emulate_flag);
+	ret &= config_setting_lookup_bool(setting, "input_flag", 	&openswitcher.options.input_flag);
+	ret &= config_setting_lookup_bool(setting, "output_flag", 	&openswitcher.options.output_flag);
+	if (ret)
+	{
+		debug("config_setting_lookup_string() error");
+		return -1;
+	}
+
+    config_destroy(&cfg);
+    return 0;
+}
+
+/*!
+* @brief setup openswitcher program
+*
+* This function setup openswitcher program
+*
+* @return count of codepoints if Ok or -1 if error
+*/
+int setup()
+{
+	message("setup openswitcher...");
+	uid_t uid = getuid();
+    struct passwd *pw = getpwuid(uid);
+
+	if (pw == NULL)
+	{
+        debug("getpwuid() error");
+        return -1;
+    }
+
+	// default configs
+	if (strcmp(pw->pw_name, "root"))
+	{
+		openswitcher.config_path = malloc(strlen(pw->pw_dir) + strlen("/.config/openswitcher/config.cfg") + 1);
+		sprintf(openswitcher.config_path, "%s/.config/openswitcher/config.cfg", pw->pw_dir);
+
+		openswitcher.actkbd_config_path = malloc(strlen(pw->pw_dir) + strlen("/.config/actkbd/actkbd.conf") + 1);
+		sprintf(openswitcher.actkbd_config_path, "%s/.config/actkbd/actkbd.conf", pw->pw_dir);
+	}else
+	{
+		char *sudo_user = getenv("SUDO_USER");
+		openswitcher.config_path = malloc(strlen(sudo_user) + strlen("/home//.config/openswitcher/config.cfg") + 1);
+		sprintf(openswitcher.config_path, "/home/%s/.config/openswitcher/config.cfg", sudo_user);
+
+		openswitcher.actkbd_config_path = malloc(strlen(sudo_user) + strlen("/home//.config//actkbd/actkbd.conf") + 1);
+		sprintf(openswitcher.actkbd_config_path, "/home/%s/.config//actkbd/actkbd.conf", sudo_user);
+	}
+	
+
+	if(read_config() != 0)
+	{
+		debug("read_config() error");
+        return -1;
+	}
+
+	return 0;
 }
