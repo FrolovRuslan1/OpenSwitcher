@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.71])
 AC_ARG_WITH([x], [AS_HELP_STRING([--with-x=yes], [Enable feature X])])
-AC_INIT([OpenSwitcher],[1.0.0],[gald.rus@yandex.ru])
+AC_INIT([OpenSwitcher],[1.0.1],[gald.rus@yandex.ru])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 AC_CONFIG_HEADERS([include/config.h])
 AC_SUBST([TODAY], [$(shell date +%Y-%m-%d)])
@@ -18,7 +18,7 @@ AC_PROG_RANLIB
 
 
 # Checks for libraries.
-PKG_CHECK_MODULES(DEPS, x11 xkbcommon icu-uc icu-io)
+PKG_CHECK_MODULES(DEPS, x11 xkbcommon icu-uc icu-io libconfig)
 
 # Checks for header files.
 AC_PATH_X
@@ -47,6 +47,7 @@ AC_CONFIG_FILES([scripts/input-device-info.sh], [chmod +x scripts/input-device-i
 AC_CONFIG_FILES([scripts/openswitcher_autocomplete.sh], [chmod +x scripts/openswitcher_autocomplete.sh])
 AC_CONFIG_FILES([scripts/_openswitcher], [chmod +x scripts/_openswitcher])
 AC_CONFIG_FILES([scripts/openswitcher.fish], [chmod +x scripts/openswitcher.fish])
+AC_CONFIG_FILES([scripts/config.cfg])
 AC_CONFIG_FILES([doc/openswitcher.1])
 AC_CONFIG_FILES([Doxyfile])
 

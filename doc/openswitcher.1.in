@@ -25,6 +25,10 @@
 
 .TP
 \fB-c, --config\fP \fIPATH_TO_CONFIG\fP
+	Specify path to openswitcher config. Default is \fB~/.config/openswitcher/config.cfg\fP
+
+.TP
+\fB-k, --config-actkbd\fP \fIPATH_TO_CONFIG\fP
 	Specify path to actkbd config. Default is \fB~/.config/actkbd/actkbd.conf\fP
 
 .TP
@@ -49,6 +53,10 @@
 
 .TP
 \fB-p, --print\fP
+	Print openswitcher config.
+
+.TP
+\fB-a, --print-actkbd\fP
 	Print actkbd config.
 
 .TP

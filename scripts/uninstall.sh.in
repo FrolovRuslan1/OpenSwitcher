@@ -51,8 +51,8 @@ if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	sudo rm -f "$sbindir/actkbd"
 	sudo rm -f "$sysconfdir/actkbd.conf"
 
-	echo "Removing /usr/local/lib/openswitcher/scripts/"
-	sudo rm -rf "/usr/local/lib/openswitcher/scripts/"
+	echo "Removing /usr/local/lib/openswitcher"
+	sudo rm -rf "/usr/local/lib/openswitcher"
 fi
 
 # Stop actkbd

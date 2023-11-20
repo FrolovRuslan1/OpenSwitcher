@@ -10,6 +10,7 @@ if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	find "/usr/local/lib/openswitcher/scripts/" -type f -exec chmod +x {} +
 	find "scripts/" -type f -name "_openswitcher" -exec cp -t "/usr/local/lib/openswitcher/scripts/" {} +
 	find "scripts/" -type f -name "openswitcher.fish" -exec cp -t "/usr/local/lib/openswitcher/scripts/" {} +
+	find "scripts/" -type f -name "config.cfg" -exec cp -t "/usr/local/lib/openswitcher/" {} +
 fi
 
 # add standart key combination to "$XDG_CONFIG_HOME/actkbd/actkbd.conf"
@@ -99,6 +100,20 @@ for file in "${required_files[@]}"; do
 					cp "/usr/lib/openswitcher/scripts/openswitcher.fish" "$file"
 				else
 					cp "/usr/local/lib/openswitcher/scripts/openswitcher.fish" "$file"
+				fi
+			else
+				echo "File $file foud."
+			fi
+			;;
+
+		"$XDG_CONFIG_HOME/openswitcher/config.cfg")
+			if [ ! -f "$file" ]; then
+				echo "File $file not found."
+				echo "Installing $file"
+				if [[ $OPENSWITCHER_INSTALL_WITH_DPKG == 1 ]]; then
+					cp "/usr/lib/openswitcher/config.cfg" "$file"
+				else
+					cp "/usr/local/lib/openswitcher/config.cfg" "$file"
 				fi
 			else
 				echo "File $file foud."

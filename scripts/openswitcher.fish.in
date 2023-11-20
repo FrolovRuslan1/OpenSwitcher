@@ -3,10 +3,12 @@
 
 complete -c openswitcher -f -r
 complete -c openswitcher -s h -l help -d 'Display this help message.'
-complete -c openswitcher -s c -l config -F -d 'Specify path to actkbd config. Default is ~/.config/actkbd/actkbd.conf'
+complete -c openswitcher -s c -l config -F -d 'Specify path to openswitcher config. Default is ~/.config/openswitcher/config.cfg'
+complete -c openswitcher -s k -l config-actkbd -F -d 'Specify path to actkbd config. Default is ~/.config/actkbd/actkbd.conf'
 complete -c openswitcher -s o -l output -d 'Enable standart output to get transformed input-event-codes.'
 complete -c openswitcher -s i -l input -d 'Enable standart input to transform KeySyms to input-event-codes.'
-complete -c openswitcher -s p -l print -d 'Print actkbd config.'
+complete -c openswitcher -s p -l print -d 'Print openswitcher config.'
+complete -c openswitcher -s a -l print-actkbd -d 'Print actkbd config.'
 complete -c openswitcher -s r -l run -d 'Run key combination event loop.'
 complete -c openswitcher -s s -l stop -d 'Stop key combination event loop.'
 complete -c openswitcher -s v -l version -d 'Print program version.'
