@@ -5878,8 +5878,6 @@ ac_config_files="$ac_config_files scripts/_openswitcher"
 
 ac_config_files="$ac_config_files scripts/openswitcher.fish"
 
-ac_config_files="$ac_config_files scripts/config.cfg"
-
 ac_config_files="$ac_config_files doc/openswitcher.1"
 
 ac_config_files="$ac_config_files Doxyfile"
@@ -6619,7 +6617,6 @@ do
     "scripts/openswitcher_autocomplete.sh") CONFIG_FILES="$CONFIG_FILES scripts/openswitcher_autocomplete.sh" ;;
     "scripts/_openswitcher") CONFIG_FILES="$CONFIG_FILES scripts/_openswitcher" ;;
     "scripts/openswitcher.fish") CONFIG_FILES="$CONFIG_FILES scripts/openswitcher.fish" ;;
-    "scripts/config.cfg") CONFIG_FILES="$CONFIG_FILES scripts/config.cfg" ;;
     "doc/openswitcher.1") CONFIG_FILES="$CONFIG_FILES doc/openswitcher.1" ;;
     "Doxyfile") CONFIG_FILES="$CONFIG_FILES Doxyfile" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;

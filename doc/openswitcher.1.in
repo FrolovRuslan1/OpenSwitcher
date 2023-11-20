@@ -83,7 +83,7 @@ General application error.
 .SH FILES
 \fBopenswitcher\fR works with configs:
 .PP
-/etc/openswitcher/config.cfg - is a default config for \fIopenswitcher\fR programm.
+$\fBXDG_CONFIG_HOME\fR/openswitcher/config.cfg - is a default config for \fIopenswitcher\fR programm.
 .PP
 $\fBXDG_CONFIG_HOME\fR/actkbd/actkbd.conf - is a default config for \fIactkbd\fR programm.
 .PP
@@ -134,7 +134,7 @@ or email
 .TP
 1. Select the text
 .TP
-2. \fBxkb-switch -n && xsel | sudo openswitcher --device "$(input-device-info.sh)"\fR
+2. \fBxkb-switch -n && xsel | sudo openswitcher --emulate\fR
 
 .PP
 .I Run openswitcher in a grafical environment:

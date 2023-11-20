@@ -78,6 +78,6 @@ if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	fi
 fi
 
-openswitcher --device "$(input-device-info.sh)" --run
+openswitcher --run
 
 echo "Installation is complete."

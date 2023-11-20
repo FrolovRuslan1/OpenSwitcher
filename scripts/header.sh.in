@@ -28,7 +28,7 @@ $OPENSWITCHERUSER ALL = (root) NOPASSWD: $programpath
 "
 
 # Requested files, can be configured yourself
-required_files=("/etc/actkbd/actkbd.conf" "$HOME_USER/.xinitrc" "/etc/bash_completion.d/openswitcher_autocomplete.sh" "/usr/share/zsh/vendor-completions/_openswitcher" "/usr/share/fish/vendor_completions.d/openswitcher.fish" "$XDG_CONFIG_HOME/openswitcher/config.cfg" "/etc/openswitcher/config.cfg")
+required_files=("$XDG_CONFIG_HOME/actkbd/actkbd.conf" "$HOME_USER/.xinitrc" "/etc/bash_completion.d/openswitcher_autocomplete.sh" "/usr/share/zsh/vendor-completions/_openswitcher" "/usr/share/fish/vendor_completions.d/openswitcher.fish" "$XDG_CONFIG_HOME/openswitcher/config.cfg")
 
 default_autostart_actkbd="sudo openswitcher --config $XDG_CONFIG_HOME/actkbd/actkbd.conf --device $(input-device-info.sh) --run"
 
@@ -50,14 +50,17 @@ openswitcher:
 	options:
 	{
 		verbose_flag = false;
-		debug_flag = true;
+		debug_flag = false;
 		emulate_flag = false;
 		input_flag = false;
 		output_flag = false;
 	};
 	name = \"openswitcher\";
 	version = \"@VERSION@\";
-	config_path = \"/etc/openswitcher/config.cfg\";
-	actkbd_config_path = \"/etc/actkbd/actkbd.conf\";
-	input_device = \"/dev/input/event0\"
+	config_path = \"$XDG_CONFIG_HOME/openswitcher/config.cfg\";
+	actkbd_config_path = \"$XDG_CONFIG_HOME/actkbd/actkbd.conf\";
+	input_device = \"$(input-device-info.sh)\"
+	username = \"$OPENSWITCHERUSER\";
+	home = \"$HOME_USER\"
+	xdg_config_home = \"$XDG_CONFIG_HOME\";
 };"

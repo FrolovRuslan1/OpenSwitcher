@@ -44,7 +44,7 @@ in `/etc/sudoers.d/openswitcher` for correct operation because it works on `evde
 
 ## Install
 
-1. `git clone https://github.com/FrolovRuslan1/OpenSwitcher`
+1. `git clone -b dev https://github.com/FrolovRuslan1/OpenSwitcher`
 2. `cd OpenSwitcher`
 3. **Read INSTALL**
 4. `./configure`
@@ -53,7 +53,7 @@ in `/etc/sudoers.d/openswitcher` for correct operation because it works on `evde
 
 ## Uninstall
 
-1. `git clone https://github.com/FrolovRuslan1/OpenSwitcher`
+1. `git clone -b dev https://github.com/FrolovRuslan1/OpenSwitcher`
 2. `cd OpenSwitcher`
 3. `./configure`
 4. `sudo make uninstall OPENSWITCHER_LOCAL_INSTALL=1`
@@ -70,7 +70,7 @@ in `/etc/sudoers.d/openswitcher` for correct operation because it works on `evde
 
 1. Select the text
 2. Change keyboard layout
-3. `xsel -o | sudo openswitcher --emulate --device "$(input-device-info.sh)"`
+3. `xkb-switch -n && xsel | sudo openswitcher --emulate`
 
 
 <!-- ## API
@@ -79,7 +79,7 @@ in `/etc/sudoers.d/openswitcher` for correct operation because it works on `evde
 
 ## Make .deb package
 
-1. `git clone https://github.com/FrolovRuslan1/OpenSwitcher`
+1. `git clone -b dev https://github.com/FrolovRuslan1/OpenSwitcher`
 2. `cd OpenSwitcher`
 3. `./configure`
 4. `make deb`
@@ -89,7 +89,7 @@ in `/etc/sudoers.d/openswitcher` for correct operation because it works on `evde
 for Debian
 `sudo apt install doxygen`
 
-1. `git clone https://github.com/FrolovRuslan1/OpenSwitcher`
+1. `git clone -b dev https://github.com/FrolovRuslan1/OpenSwitcher`
 2. `cd OpenSwitcher`
 3. `./configure`
 4. `doxygen`

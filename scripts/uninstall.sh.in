@@ -14,8 +14,8 @@ sudo rm "$sudoerspath"
 
 # Removing the OpenSwitcher standard keyboard shortcut
 echo "Removing the standard keyboard shortcut from $XDG_CONFIG_HOME/actkbd/actkbd.conf."
-input_file="/etc/actkbd/actkbd.conf"
-output_file="/etc/actkbd/actkbd.conf.tmp"
+input_file="$XDG_CONFIG_HOME/actkbd/actkbd.conf"
+output_file="$XDG_CONFIG_HOME/actkbd/actkbd.conf.tmp"
 
 sudo grep -v "$default_combination" "$input_file" | sudo tee "$output_file" && sudo rm "$input_file" && sudo mv "$output_file" "$input_file"
 
@@ -23,13 +23,9 @@ sudo grep -v "$default_combination" "$input_file" | sudo tee "$output_file" && s
 echo "Removing the standard autorun from $HOME_USER/.xinitrc."
 grep -v "$default_autostart_actkbd" "$HOME_USER/.xinitrc" > "/tmp/.xinitrc.tmp" && mv -f "/tmp/.xinitrc.tmp" "$HOME_USER/.xinitrc"
 
-# Removing the OpenSwitcher config
+# Removing the default OpenSwitcher config
 echo "Removing OpenSwitcher config $XDG_CONFIG_HOME/openswitcher/config.cfg"
 sudo rm -rf "$XDG_CONFIG_HOME/openswitcher"
-
-# Removing the default OpenSwitcher config
-echo "Removing default OpenSwitcher config /etc/openswitcher/config.cfg"
-sudo rm -rf "/etc/openswitcher/config.cfg"
 
 # Removing bash, zsh , fish completions
 echo "Removing bash completion /etc/bash_completion.d/openswitcher_autocomplete.sh"

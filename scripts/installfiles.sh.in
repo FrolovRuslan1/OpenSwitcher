@@ -59,8 +59,7 @@ add_standart_autostart()
 for file in "${required_files[@]}"; do
 
 	case "$file" in
-		"/etc/actkbd/actkbd.conf")
-			mkdir -p "/etc/actkbd/"
+		"$XDG_CONFIG_HOME/actkbd/actkbd.conf")
 			add_standart_combination
 			;;
 		"$HOME_USER/.xinitrc")
@@ -112,17 +111,6 @@ for file in "${required_files[@]}"; do
 				echo "File $file not found."
 				echo "Installing $file"
 				sudo --user "$OPENSWITCHERUSER" echo "$config" > "$file"
-			else
-				echo "File $file foud."
-			fi
-			;;
-		
-		"/etc/openswitcher/config.cfg")
-			if [ ! -f "$file" ]; then
-				mkdir -p "/etc/openswitcher/"
-				echo "File $file not found."
-				echo "Installing $file"
-				echo "$config" > "$file"
 			else
 				echo "File $file foud."
 			fi

@@ -66,6 +66,7 @@ int message(const char *text);
 int debug(const char *text);
 int count_codepoints(char* utf8_string);
 int read_config();
+int setup();
 
 struct Options
 {
@@ -83,7 +84,10 @@ struct Openswitcher
 	char *version;
 	char *config_path;
 	char *actkbd_config_path;
-	char* input_device;
+	char *input_device;
+	char *username;
+	char *home;
+	char *xdg_config_home;
 	config_t cfg;
 };
 
@@ -98,10 +102,13 @@ static struct Openswitcher openswitcher =
 	},
 	.name = PACKAGE,
 	.version = VERSION,
-	.config_path = "/etc/openswitcher/config.cfg",
-	.actkbd_config_path = "/etc/actkbd/actkbd.conf",
+	.config_path = NULL,
+	.actkbd_config_path = NULL,
 	// eventX is a keyboard driver; if you want to setup it try `sudo evtest`
-	.input_device = "/dev/input/event0"
+	.input_device = NULL,
+	.username = NULL,
+	.home = NULL,
+	.xdg_config_home = NULL
 };
 
 
@@ -118,13 +125,12 @@ static struct Openswitcher openswitcher =
 */
 int main(int argc, char * const argv[])
 {
-	if(read_config() != 0)
+	if(setup() != 0)
 	{
-		debug("read_config() error");
+		debug("setup() error");
         return -1;
 	}
 
-	
     if (options_handler(argc, argv) != 0)
 	{
         debug("options_handler() error");
@@ -1036,6 +1042,9 @@ int read_config()
 	ret &= config_setting_lookup_string(setting, "config_path", 		(const char **)&openswitcher.config_path);
 	ret &= config_setting_lookup_string(setting, "actkbd_config_path", 	(const char **)&openswitcher.actkbd_config_path);
 	ret &= config_setting_lookup_string(setting, "input_device", 		(const char **)&openswitcher.input_device);
+	ret &= config_setting_lookup_string(setting, "username", 			(const char **)&openswitcher.username);
+	ret &= config_setting_lookup_string(setting, "home", 				(const char **)&openswitcher.home);
+	ret &= config_setting_lookup_string(setting, "xdg_config_home", 	(const char **)&openswitcher.xdg_config_home);
 	if (ret)
 	{
 		debug("config_setting_lookup_string() error");
@@ -1063,3 +1072,90 @@ int read_config()
     return 0;
 }
 
+/*!
+* @brief setup openswitcher
+*
+* This function setup openswitcher program
+* 
+* @return count of codepoints if Ok or -1 if error
+*/
+int setup()
+{
+	message("openswitcher setup...");
+	uid_t uid = geteuid();  // Получение эффективного пользовательского идентификатора (EUID)
+    struct passwd *pw = getpwuid(uid);  // Получение ссылки на структуру passwd
+
+    if (pw == NULL) 
+	{
+    	debug("getpwuid() error");
+        return -1;
+    }
+
+	// default settings
+	if (strcmp(pw->pw_name, "root"))
+	{
+		message("USER");
+		message(pw->pw_name);
+		openswitcher.username = pw->pw_name;
+		openswitcher.home = pw->pw_dir;
+		openswitcher.xdg_config_home = malloc(strlen(pw->pw_dir) + strlen("/.config") + 1);
+		if (openswitcher.xdg_config_home == NULL)
+		{
+			debug("malloc() error");
+			return -1;
+		}
+		sprintf(openswitcher.xdg_config_home, "%s/.config", pw->pw_dir);
+
+		openswitcher.config_path = malloc(strlen(openswitcher.xdg_config_home) + strlen("/openswitcher/config.cfg") + 1);
+		if (openswitcher.config_path == NULL)
+		{
+			debug("malloc() error");
+			return -1;
+		}
+		sprintf(openswitcher.config_path, "%s/openswitcher/config.cfg", openswitcher.xdg_config_home);
+		
+	}else if (getenv("SUDO_USER") != NULL)
+	{
+		char *sudo_user = getenv("SUDO_USER");
+		message("SUDO_USER");
+		message(sudo_user);
+		openswitcher.username = sudo_user;
+		openswitcher.home = malloc(strlen(sudo_user) + strlen("/home/") + 1);
+		if (openswitcher.home == NULL)
+		{
+			debug("malloc() error");
+			return -1;
+		}
+		
+		sprintf(openswitcher.home, "/home/%s", sudo_user);
+
+		openswitcher.xdg_config_home = malloc(strlen(openswitcher.home) + strlen("/.config") + 1);
+		if (openswitcher.xdg_config_home == NULL)
+		{
+			debug("malloc() error");
+			return -1;
+		}
+		sprintf(openswitcher.xdg_config_home, "%s/.config", openswitcher.home);
+
+		openswitcher.config_path = malloc(strlen(openswitcher.xdg_config_home) + strlen("/openswitcher/config.cfg") + 1);
+		if (openswitcher.config_path == NULL)
+		{
+			debug("malloc() error");
+			return -1;
+		}
+		sprintf(openswitcher.config_path, "%s/openswitcher/config.cfg", openswitcher.xdg_config_home);
+				
+	}else
+	{
+		debug("SUDO_USER and USER is root.");
+		return -1;
+	}
+	
+	if (read_config() != 0)
+	{
+		debug("read_config() error");
+		return -1;
+	}
+
+	return 0;
+}
