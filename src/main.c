@@ -66,7 +66,6 @@ int message(const char *text);
 int debug(const char *text);
 int count_codepoints(char* utf8_string);
 int read_config();
-int setup();
 
 struct Options
 {
@@ -85,21 +84,22 @@ struct Openswitcher
 	char *config_path;
 	char *actkbd_config_path;
 	char* input_device;
+	config_t cfg;
 };
 
 static struct Openswitcher openswitcher = 
 {
 	.options = {
-		.verbose_flag = 1,
-		.debug_flag = 1,
+		.verbose_flag = 0,
+		.debug_flag = 0,
 		.emulate_flag = 0,
 		.input_flag = 0,
 		.output_flag = 0,
 	},
 	.name = PACKAGE,
 	.version = VERSION,
-	.config_path = "",
-	.actkbd_config_path = "",
+	.config_path = "/etc/openswitcher/config.cfg",
+	.actkbd_config_path = "/etc/actkbd/actkbd.conf",
 	// eventX is a keyboard driver; if you want to setup it try `sudo evtest`
 	.input_device = "/dev/input/event0"
 };
@@ -118,12 +118,13 @@ static struct Openswitcher openswitcher =
 */
 int main(int argc, char * const argv[])
 {
-	if (setup() != 0)
+	if(read_config() != 0)
 	{
-        debug("setup() error");
+		debug("read_config() error");
         return -1;
-    }
+	}
 
+	
     if (options_handler(argc, argv) != 0)
 	{
         debug("options_handler() error");
@@ -205,6 +206,7 @@ int main(int argc, char * const argv[])
     }
 
     close(epoll_fd);
+	config_destroy(&openswitcher.cfg);
     
     return 0;
 }
@@ -771,13 +773,13 @@ int options_handler(int argc, char * const argv[])
 			if (system("pgrep actkbd >/dev/null") == 0) {
 				message("Restart actkbd");
 
-				if (system("sudo killall actkbd") != 0)
+				if (system("killall actkbd") != 0)
 				{
 					debug("system() error");
 					return -1;
 				}
 				
-				size_t command_length = strlen(openswitcher.actkbd_config_path) + strlen("sudo actkbd -D -c ") + 1;
+				size_t command_length = strlen(openswitcher.actkbd_config_path) + strlen("actkbd -D -c ") + 1;
 				if (command_length <= 0)
 				{
 					debug("strlen() error");
@@ -790,7 +792,7 @@ int options_handler(int argc, char * const argv[])
 					debug("malloc() error");
 					return -1;
 				}
-				snprintf(command, command_length, "sudo actkbd -D -c %s", openswitcher.actkbd_config_path);
+				snprintf(command, command_length, "actkbd -D -c %s", openswitcher.actkbd_config_path);
 
 				if (system(command) != 0)
 				{
@@ -804,7 +806,7 @@ int options_handler(int argc, char * const argv[])
 			{
 				message("Run actkbd");
 
-				size_t command_length = strlen(openswitcher.actkbd_config_path) + strlen("sudo actkbd -D -c ") + 1;
+				size_t command_length = strlen(openswitcher.actkbd_config_path) + strlen("actkbd -D -c ") + 1;
 				if (command_length <= 0)
 				{
 					debug("strlen() error");
@@ -816,7 +818,7 @@ int options_handler(int argc, char * const argv[])
 					debug("malloc() error");
 					return -1;
 				}
-				snprintf(command, command_length, "sudo actkbd -D -c %s", openswitcher.actkbd_config_path);
+				snprintf(command, command_length, "actkbd -D -c %s", openswitcher.actkbd_config_path);
 
 				if (system(command) != 0)
 				{
@@ -1002,24 +1004,26 @@ int read_config()
 {
 	message("read openswitcher config from:");
 	message(openswitcher.config_path);
-	config_t cfg;
+	
     config_setting_t *setting;
     const char *str;
 
-    config_init(&cfg);
+    config_init(&openswitcher.cfg);
 	
-    if (!config_read_file(&cfg, openswitcher.config_path))
+    if (!config_read_file(&openswitcher.cfg, (const char *)openswitcher.config_path))
 	{
-		debug("config_read_file() error");	
+		debug("config_read_file() error");
+		perror("openswitcher.config_path");	
+		perror(openswitcher.config_path);
         fprintf(stderr, "%s:%d - %s\n",
-                config_error_file(&cfg),
-                config_error_line(&cfg),
-                config_error_text(&cfg));
-        config_destroy(&cfg);
+                config_error_file(&openswitcher.cfg),
+                config_error_line(&openswitcher.cfg),
+                config_error_text(&openswitcher.cfg));
+        config_destroy(&openswitcher.cfg);
         return -1;
     }
 
-    setting = config_lookup(&cfg, "openswitcher");
+    setting = config_lookup(&openswitcher.cfg, "openswitcher");
 	if (setting == NULL)
 	{
 		debug("config_lookup() error");
@@ -1038,7 +1042,7 @@ int read_config()
 		return -1;
 	}
 
-	setting = config_lookup(&cfg, "openswitcher.options");
+	setting = config_lookup(&openswitcher.cfg, "openswitcher.options");
 	if (setting == NULL)
 	{
 		debug("config_lookup() error");
@@ -1056,53 +1060,6 @@ int read_config()
 		return -1;
 	}
 
-    config_destroy(&cfg);
     return 0;
 }
 
-/*!
-* @brief setup openswitcher program
-*
-* This function setup openswitcher program
-*
-* @return count of codepoints if Ok or -1 if error
-*/
-int setup()
-{
-	message("setup openswitcher...");
-	uid_t uid = getuid();
-    struct passwd *pw = getpwuid(uid);
-
-	if (pw == NULL)
-	{
-        debug("getpwuid() error");
-        return -1;
-    }
-
-	// default configs
-	if (strcmp(pw->pw_name, "root"))
-	{
-		openswitcher.config_path = malloc(strlen(pw->pw_dir) + strlen("/.config/openswitcher/config.cfg") + 1);
-		sprintf(openswitcher.config_path, "%s/.config/openswitcher/config.cfg", pw->pw_dir);
-
-		openswitcher.actkbd_config_path = malloc(strlen(pw->pw_dir) + strlen("/.config/actkbd/actkbd.conf") + 1);
-		sprintf(openswitcher.actkbd_config_path, "%s/.config/actkbd/actkbd.conf", pw->pw_dir);
-	}else
-	{
-		char *sudo_user = getenv("SUDO_USER");
-		openswitcher.config_path = malloc(strlen(sudo_user) + strlen("/home//.config/openswitcher/config.cfg") + 1);
-		sprintf(openswitcher.config_path, "/home/%s/.config/openswitcher/config.cfg", sudo_user);
-
-		openswitcher.actkbd_config_path = malloc(strlen(sudo_user) + strlen("/home//.config//actkbd/actkbd.conf") + 1);
-		sprintf(openswitcher.actkbd_config_path, "/home/%s/.config//actkbd/actkbd.conf", sudo_user);
-	}
-	
-
-	if(read_config() != 0)
-	{
-		debug("read_config() error");
-        return -1;
-	}
-
-	return 0;
-}

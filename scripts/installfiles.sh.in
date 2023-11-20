@@ -10,7 +10,6 @@ if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	find "/usr/local/lib/openswitcher/scripts/" -type f -exec chmod +x {} +
 	find "scripts/" -type f -name "_openswitcher" -exec cp -t "/usr/local/lib/openswitcher/scripts/" {} +
 	find "scripts/" -type f -name "openswitcher.fish" -exec cp -t "/usr/local/lib/openswitcher/scripts/" {} +
-	find "scripts/" -type f -name "config.cfg" -exec cp -t "/usr/local/lib/openswitcher/" {} +
 fi
 
 # add standart key combination to "$XDG_CONFIG_HOME/actkbd/actkbd.conf"
@@ -42,14 +41,14 @@ add_standart_autostart()
 	if [ ! -f "$file" ]; then
 		echo "File $file not found."
 		echo "Copying the standard /etc/X11/xinit/xinitrc to $file."
-		cp /etc/X11/xinit/xinitrc "$file"
+		sudo --user "$OPENSWITCHERUSER" cp /etc/X11/xinit/xinitrc "$file"
 		echo "Installation of a standard autostart."
-		echo "$default_autostart_actkbd" >> "$file"
+		sudo --user "$OPENSWITCHERUSER" echo "$default_autostart_actkbd" >> "$file"
 	else
 		echo "File $file found."
 		if ! grep -q "$default_autostart_actkbd" "$file"; then
 			echo "Installation of a standard autostart."
-			echo "$default_autostart_actkbd" >> "$file"
+			sudo --user "$OPENSWITCHERUSER" echo "$default_autostart_actkbd" >> "$file"
         else
             echo "Standard autostart found."
         fi
@@ -60,7 +59,8 @@ add_standart_autostart()
 for file in "${required_files[@]}"; do
 
 	case "$file" in
-		"$XDG_CONFIG_HOME/actkbd/actkbd.conf")
+		"/etc/actkbd/actkbd.conf")
+			mkdir -p "/etc/actkbd/"
 			add_standart_combination
 			;;
 		"$HOME_USER/.xinitrc")
@@ -108,13 +108,21 @@ for file in "${required_files[@]}"; do
 
 		"$XDG_CONFIG_HOME/openswitcher/config.cfg")
 			if [ ! -f "$file" ]; then
+				sudo --user "$OPENSWITCHERUSER" mkdir -p "$XDG_CONFIG_HOME/openswitcher"
 				echo "File $file not found."
 				echo "Installing $file"
-				if [[ $OPENSWITCHER_INSTALL_WITH_DPKG == 1 ]]; then
-					cp "/usr/lib/openswitcher/config.cfg" "$file"
-				else
-					cp "/usr/local/lib/openswitcher/config.cfg" "$file"
-				fi
+				sudo --user "$OPENSWITCHERUSER" echo "$config" > "$file"
+			else
+				echo "File $file foud."
+			fi
+			;;
+		
+		"/etc/openswitcher/config.cfg")
+			if [ ! -f "$file" ]; then
+				mkdir -p "/etc/openswitcher/"
+				echo "File $file not found."
+				echo "Installing $file"
+				echo "$config" > "$file"
 			else
 				echo "File $file foud."
 			fi

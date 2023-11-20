@@ -78,10 +78,6 @@ if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	fi
 fi
 
-mkdir -p "$XDG_CONFIG_HOME/openswitcher"
-pwd
-cp "./config.cfg" "$XDG_CONFIG_HOME/openswitcher/config.cfg"
-
-sudo openswitcher --config "$XDG_CONFIG_HOME/actkbd/actkbd.conf" --device "$(input-device-info.sh)" --run
+openswitcher --device "$(input-device-info.sh)" --run
 
 echo "Installation is complete."
