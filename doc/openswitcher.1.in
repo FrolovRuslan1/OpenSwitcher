@@ -83,7 +83,7 @@ General application error.
 .SH FILES
 \fBopenswitcher\fR works with configs:
 .PP
-$\fBXDG_CONFIG_HOME\fR/openswitcher/config.cfg - is a default config for \fIopenswitcher\fR programm.
+/etc/openswitcher/config.cfg - is a default config for \fIopenswitcher\fR programm.
 .PP
 $\fBXDG_CONFIG_HOME\fR/actkbd/actkbd.conf - is a default config for \fIactkbd\fR programm.
 .PP
