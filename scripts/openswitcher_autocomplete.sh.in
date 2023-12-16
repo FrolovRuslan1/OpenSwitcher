@@ -7,7 +7,7 @@ _openswitcher() {
 
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--help --config --config-actkbd --run --stop --version --device --input --output --verbose --debug --print --print-actkbd --emulate"
+    opts="--help --config --config-actkbd --run --stop --version --device --input --output --verbose --debug --print --print-actkbd --emulate --add-shortcut"
 	
 	
 

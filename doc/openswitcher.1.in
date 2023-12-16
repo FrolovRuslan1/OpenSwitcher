@@ -64,6 +64,10 @@
 	Enable emulation mode. It emulates key presses of KeySyms input.
 
 .TP
+\fB-b, --add-shortcut\fP
+	Adding shortcut to actkbd config.
+
+.TP
 \fB    --verbose\fP
 	Enable verbose mode.
 
@@ -74,10 +78,10 @@
 .SH EXIT STATUS
 \fBopenswitcher\fR returns the following status values:
 .TP
-\fB0\fR
+\fBEXIT_FAILURE\fR
 Successful termination of the application.
 .TP
-\fB-1\fR
+\fBEXIT_SUCCESS\fR
 General application error.
 
 .SH FILES

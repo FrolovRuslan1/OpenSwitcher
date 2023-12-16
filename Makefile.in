@@ -15,6 +15,7 @@
 @SET_MAKE@
 
 
+
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -96,23 +97,29 @@ am__aclocal_m4_deps = $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 DIST_COMMON = $(srcdir)/Makefile.am $(top_srcdir)/configure \
-	$(am__configure_deps) $(am__DIST_COMMON)
+	$(am__configure_deps) $(nobase_include_HEADERS) \
+	$(am__DIST_COMMON)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
 mkinstalldirs = $(install_sh) -d
-CONFIG_HEADER = $(top_builddir)/include/config.h
+CONFIG_HEADER = $(top_builddir)/openswitcher_include/config.h
 CONFIG_CLEAN_FILES = scripts/header.sh scripts/install.sh \
 	scripts/installpkgs.sh scripts/installfiles.sh \
 	scripts/uninstall.sh scripts/openswitcher.sh \
 	scripts/input-device-info.sh \
 	scripts/openswitcher_autocomplete.sh scripts/_openswitcher \
-	scripts/openswitcher.fish doc/openswitcher.1 Doxyfile
+	scripts/openswitcher.fish openswitcher_include/main.h \
+	openswitcher_include/functional.h \
+	openswitcher_include/utilities.h openswitcher_include/common.h \
+	doc/openswitcher.1 Doxyfile
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" \
-	"$(DESTDIR)$(man1dir)"
+	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(includedir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am_openswitcher_OBJECTS = src/openswitcher-main.$(OBJEXT)
+am_openswitcher_OBJECTS = src/openswitcher-main.$(OBJEXT) \
+	src/openswitcher-functional.$(OBJEXT) \
+	src/openswitcher-utilities.$(OBJEXT)
 openswitcher_OBJECTS = $(am_openswitcher_OBJECTS)
 am__DEPENDENCIES_1 =
 openswitcher_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -158,10 +165,12 @@ AM_V_at = $(am__v_at_@AM_V@)
 am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
-DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/include
+DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/openswitcher_include
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
-am__depfiles_remade = src/$(DEPDIR)/openswitcher-main.Po
+am__depfiles_remade = src/$(DEPDIR)/openswitcher-functional.Po \
+	src/$(DEPDIR)/openswitcher-main.Po \
+	src/$(DEPDIR)/openswitcher-utilities.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -189,6 +198,7 @@ am__can_run_installinfo = \
 man1dir = $(mandir)/man1
 NROFF = nroff
 MANS = $(man1_MANS)
+HEADERS = $(nobase_include_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -209,7 +219,11 @@ am__define_uniq_tagged_files = \
 AM_RECURSIVE_TARGETS = cscope
 am__DIST_COMMON = $(srcdir)/Doxyfile.in $(srcdir)/Makefile.in \
 	$(top_srcdir)/doc/openswitcher.1.in \
-	$(top_srcdir)/include/config.h.in \
+	$(top_srcdir)/openswitcher_include/common.h.in \
+	$(top_srcdir)/openswitcher_include/config.h.in \
+	$(top_srcdir)/openswitcher_include/functional.h.in \
+	$(top_srcdir)/openswitcher_include/main.h.in \
+	$(top_srcdir)/openswitcher_include/utilities.h.in \
 	$(top_srcdir)/scripts/_openswitcher.in \
 	$(top_srcdir)/scripts/header.sh.in \
 	$(top_srcdir)/scripts/input-device-info.sh.in \
@@ -349,7 +363,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 OPENSWITCHER_LOCAL_INSTALL = 0
-openswitcher_SOURCES = src/main.c
+nobase_include_HEADERS = openswitcher_include/main.h openswitcher_include/functional.h openswitcher_include/utilities.h openswitcher_include/common.h
+openswitcher_SOURCES = src/main.c src/functional.c src/utilities.c
 openswitcher_CFLAGS = $(DEPS_CFLAGS)
 openswitcher_LDADD = $(DEPS_LIBS)
 bin_SCRIPTS = scripts/openswitcher.sh scripts/input-device-info.sh
@@ -395,20 +410,20 @@ $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	$(am__cd) $(srcdir) && $(ACLOCAL) $(ACLOCAL_AMFLAGS)
 $(am__aclocal_m4_deps):
 
-include/config.h: include/stamp-h1
-	@test -f $@ || rm -f include/stamp-h1
-	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) include/stamp-h1
+openswitcher_include/config.h: openswitcher_include/stamp-h1
+	@test -f $@ || rm -f openswitcher_include/stamp-h1
+	@test -f $@ || $(MAKE) $(AM_MAKEFLAGS) openswitcher_include/stamp-h1
 
-include/stamp-h1: $(top_srcdir)/include/config.h.in $(top_builddir)/config.status
-	@rm -f include/stamp-h1
-	cd $(top_builddir) && $(SHELL) ./config.status include/config.h
-$(top_srcdir)/include/config.h.in:  $(am__configure_deps) 
+openswitcher_include/stamp-h1: $(top_srcdir)/openswitcher_include/config.h.in $(top_builddir)/config.status
+	@rm -f openswitcher_include/stamp-h1
+	cd $(top_builddir) && $(SHELL) ./config.status openswitcher_include/config.h
+$(top_srcdir)/openswitcher_include/config.h.in:  $(am__configure_deps) 
 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
-	rm -f include/stamp-h1
+	rm -f openswitcher_include/stamp-h1
 	touch $@
 
 distclean-hdr:
-	-rm -f include/config.h include/stamp-h1
+	-rm -f openswitcher_include/config.h openswitcher_include/stamp-h1
 scripts/header.sh: $(top_builddir)/config.status $(top_srcdir)/scripts/header.sh.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 scripts/install.sh: $(top_builddir)/config.status $(top_srcdir)/scripts/install.sh.in
@@ -428,6 +443,14 @@ scripts/openswitcher_autocomplete.sh: $(top_builddir)/config.status $(top_srcdir
 scripts/_openswitcher: $(top_builddir)/config.status $(top_srcdir)/scripts/_openswitcher.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 scripts/openswitcher.fish: $(top_builddir)/config.status $(top_srcdir)/scripts/openswitcher.fish.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+openswitcher_include/main.h: $(top_builddir)/config.status $(top_srcdir)/openswitcher_include/main.h.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+openswitcher_include/functional.h: $(top_builddir)/config.status $(top_srcdir)/openswitcher_include/functional.h.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+openswitcher_include/utilities.h: $(top_builddir)/config.status $(top_srcdir)/openswitcher_include/utilities.h.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
+openswitcher_include/common.h: $(top_builddir)/config.status $(top_srcdir)/openswitcher_include/common.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 doc/openswitcher.1: $(top_builddir)/config.status $(top_srcdir)/doc/openswitcher.1.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
@@ -483,6 +506,10 @@ src/$(DEPDIR)/$(am__dirstamp):
 	@: > src/$(DEPDIR)/$(am__dirstamp)
 src/openswitcher-main.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/openswitcher-functional.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/openswitcher-utilities.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 
 openswitcher$(EXEEXT): $(openswitcher_OBJECTS) $(openswitcher_DEPENDENCIES) $(EXTRA_openswitcher_DEPENDENCIES) 
 	@rm -f openswitcher$(EXEEXT)
@@ -530,7 +557,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/openswitcher-functional.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/openswitcher-main.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/openswitcher-utilities.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -567,6 +596,34 @@ src/openswitcher-main.obj: src/main.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/main.c' object='src/openswitcher-main.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(openswitcher_CFLAGS) $(CFLAGS) -c -o src/openswitcher-main.obj `if test -f 'src/main.c'; then $(CYGPATH_W) 'src/main.c'; else $(CYGPATH_W) '$(srcdir)/src/main.c'; fi`
+
+src/openswitcher-functional.o: src/functional.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(openswitcher_CFLAGS) $(CFLAGS) -MT src/openswitcher-functional.o -MD -MP -MF src/$(DEPDIR)/openswitcher-functional.Tpo -c -o src/openswitcher-functional.o `test -f 'src/functional.c' || echo '$(srcdir)/'`src/functional.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/openswitcher-functional.Tpo src/$(DEPDIR)/openswitcher-functional.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/functional.c' object='src/openswitcher-functional.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(openswitcher_CFLAGS) $(CFLAGS) -c -o src/openswitcher-functional.o `test -f 'src/functional.c' || echo '$(srcdir)/'`src/functional.c
+
+src/openswitcher-functional.obj: src/functional.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(openswitcher_CFLAGS) $(CFLAGS) -MT src/openswitcher-functional.obj -MD -MP -MF src/$(DEPDIR)/openswitcher-functional.Tpo -c -o src/openswitcher-functional.obj `if test -f 'src/functional.c'; then $(CYGPATH_W) 'src/functional.c'; else $(CYGPATH_W) '$(srcdir)/src/functional.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/openswitcher-functional.Tpo src/$(DEPDIR)/openswitcher-functional.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/functional.c' object='src/openswitcher-functional.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(openswitcher_CFLAGS) $(CFLAGS) -c -o src/openswitcher-functional.obj `if test -f 'src/functional.c'; then $(CYGPATH_W) 'src/functional.c'; else $(CYGPATH_W) '$(srcdir)/src/functional.c'; fi`
+
+src/openswitcher-utilities.o: src/utilities.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(openswitcher_CFLAGS) $(CFLAGS) -MT src/openswitcher-utilities.o -MD -MP -MF src/$(DEPDIR)/openswitcher-utilities.Tpo -c -o src/openswitcher-utilities.o `test -f 'src/utilities.c' || echo '$(srcdir)/'`src/utilities.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/openswitcher-utilities.Tpo src/$(DEPDIR)/openswitcher-utilities.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/utilities.c' object='src/openswitcher-utilities.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(openswitcher_CFLAGS) $(CFLAGS) -c -o src/openswitcher-utilities.o `test -f 'src/utilities.c' || echo '$(srcdir)/'`src/utilities.c
+
+src/openswitcher-utilities.obj: src/utilities.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(openswitcher_CFLAGS) $(CFLAGS) -MT src/openswitcher-utilities.obj -MD -MP -MF src/$(DEPDIR)/openswitcher-utilities.Tpo -c -o src/openswitcher-utilities.obj `if test -f 'src/utilities.c'; then $(CYGPATH_W) 'src/utilities.c'; else $(CYGPATH_W) '$(srcdir)/src/utilities.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) src/$(DEPDIR)/openswitcher-utilities.Tpo src/$(DEPDIR)/openswitcher-utilities.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='src/utilities.c' object='src/openswitcher-utilities.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(openswitcher_CFLAGS) $(CFLAGS) -c -o src/openswitcher-utilities.obj `if test -f 'src/utilities.c'; then $(CYGPATH_W) 'src/utilities.c'; else $(CYGPATH_W) '$(srcdir)/src/utilities.c'; fi`
 install-man1: $(man1_MANS)
 	@$(NORMAL_INSTALL)
 	@list1='$(man1_MANS)'; \
@@ -608,6 +665,30 @@ uninstall-man1:
 	} | sed -e 's,.*/,,;h;s,.*\.,,;s,^[^1][0-9a-z]*$$,1,;x' \
 	      -e 's,\.[0-9a-z]*$$,,;$(transform);G;s,\n,.,'`; \
 	dir='$(DESTDIR)$(man1dir)'; $(am__uninstall_files_from_dir)
+install-nobase_includeHEADERS: $(nobase_include_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(nobase_include_HEADERS)'; test -n "$(includedir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(includedir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(includedir)" || exit 1; \
+	fi; \
+	$(am__nobase_list) | while read dir files; do \
+	  xfiles=; for file in $$files; do \
+	    if test -f "$$file"; then xfiles="$$xfiles $$file"; \
+	    else xfiles="$$xfiles $(srcdir)/$$file"; fi; done; \
+	  test -z "$$xfiles" || { \
+	    test "x$$dir" = x. || { \
+	      echo " $(MKDIR_P) '$(DESTDIR)$(includedir)/$$dir'"; \
+	      $(MKDIR_P) "$(DESTDIR)$(includedir)/$$dir"; }; \
+	    echo " $(INSTALL_HEADER) $$xfiles '$(DESTDIR)$(includedir)/$$dir'"; \
+	    $(INSTALL_HEADER) $$xfiles "$(DESTDIR)$(includedir)/$$dir" || exit $$?; }; \
+	done
+
+uninstall-nobase_includeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(nobase_include_HEADERS)'; test -n "$(includedir)" || list=; \
+	$(am__nobase_strip_setup); files=`$(am__nobase_strip)`; \
+	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -841,9 +922,9 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-am
-all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(MANS) all-local
+all-am: Makefile $(PROGRAMS) $(SCRIPTS) $(MANS) $(HEADERS) all-local
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
 install: install-am
@@ -885,7 +966,9 @@ clean-am: clean-binPROGRAMS clean-generic clean-local mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-		-rm -f src/$(DEPDIR)/openswitcher-main.Po
+		-rm -f src/$(DEPDIR)/openswitcher-functional.Po
+	-rm -f src/$(DEPDIR)/openswitcher-main.Po
+	-rm -f src/$(DEPDIR)/openswitcher-utilities.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-local distclean-tags
@@ -902,7 +985,7 @@ info: info-am
 
 info-am:
 
-install-data-am: install-man
+install-data-am: install-man install-nobase_includeHEADERS
 
 install-dvi: install-dvi-am
 
@@ -934,7 +1017,9 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-		-rm -f src/$(DEPDIR)/openswitcher-main.Po
+		-rm -f src/$(DEPDIR)/openswitcher-functional.Po
+	-rm -f src/$(DEPDIR)/openswitcher-main.Po
+	-rm -f src/$(DEPDIR)/openswitcher-utilities.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -950,7 +1035,8 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS uninstall-man
+uninstall-am: uninstall-binPROGRAMS uninstall-binSCRIPTS uninstall-man \
+	uninstall-nobase_includeHEADERS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) uninstall-hook
 uninstall-man: uninstall-man1
@@ -969,13 +1055,14 @@ uninstall-man: uninstall-man1
 	install-data install-data-am install-dvi install-dvi-am \
 	install-exec install-exec-am install-exec-hook install-html \
 	install-html-am install-info install-info-am install-man \
-	install-man1 install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
-	ps ps-am tags tags-am uninstall uninstall-am \
-	uninstall-binPROGRAMS uninstall-binSCRIPTS uninstall-hook \
-	uninstall-man uninstall-man1
+	install-man1 install-nobase_includeHEADERS install-pdf \
+	install-pdf-am install-ps install-ps-am install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-binSCRIPTS \
+	uninstall-hook uninstall-man uninstall-man1 \
+	uninstall-nobase_includeHEADERS
 
 .PRECIOUS: Makefile
 
@@ -1000,12 +1087,14 @@ clean-local:
 	rm -rf xkb-switch/build
 	$(MAKE) --directory=actkbd clean
 
+# make clean all
 distclean-local: clean
-	rm -rf openswitcher*
+	find . -type d -name 'openswitcher*' -not -name 'openswitcher_include' -exec rm -rf {} +
 	rm -rf doc/html
 	rm -rf doc/docbook
 	rm -rf doc/searchdata.xml
 
+# make tarball
 $(PACKAGE_TARNAME)-$(VERSION).tar.gz: $(bin_PROGRAMS)
 	$(MAKE) dist
 

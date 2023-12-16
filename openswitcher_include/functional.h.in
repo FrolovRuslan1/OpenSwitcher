@@ -1,0 +1,30 @@
+// If you read it you shold know that X11 is absolutely old shit please try support to develop new Window Maneger
+/*!
+	@file
+	@brief This is the functional header file of OpenSwitcher project.
+
+	This file declares a variety of functionality such as 
+	read_text_from_stdin(), transform_stdin_to_KeySyms(char *text) and add_actkbd_shortcut().
+*/
+#ifndef FUNCTIONAL_H
+#define FUNCTIONAL_H
+
+#include "common.h"
+#include "utilities.h"
+
+extern char *read_text_from_stdin();
+extern KeySym *transform_stdin_to_KeySyms(char *text);
+extern int write_KeySym(int fd, KeySym keysym);
+extern int write_key(int fd, struct input_event *ev, int value, KeyCode keycode);
+extern int write_event(int fd, const struct input_event *ev);
+extern int create_event(struct input_event *ev, int type, int code, int value);
+extern KeySym KeyCodeToKeySym(Display * display, KeyCode keycode, unsigned int event_mask);
+extern int read_event(int fd, struct input_event *ev);
+extern int add_actkbd_shortcut();
+extern int get_key_combination(GArray *combination);
+extern int wait_for_event(int fd, struct input_event *ev, int epoll_fd, struct epoll_event events[1]);
+extern gint CompareFunc(gconstpointer a, gconstpointer b);
+extern char *combination_to_str(GArray *combination);
+
+
+#endif//FUNCTIONAL_H

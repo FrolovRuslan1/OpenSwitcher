@@ -1,8 +1,9 @@
 VERSION = @PACKAGE_VERSION@
 OPENSWITCHER_LOCAL_INSTALL = 0
 
+nobase_include_HEADERS = openswitcher_include/main.h openswitcher_include/functional.h openswitcher_include/utilities.h openswitcher_include/common.h
 bin_PROGRAMS = openswitcher
-openswitcher_SOURCES = src/main.c
+openswitcher_SOURCES = src/main.c src/functional.c src/utilities.c
 
 
 openswitcher_CFLAGS = $(DEPS_CFLAGS)
@@ -46,12 +47,14 @@ clean-local:
 	rm -rf xkb-switch/build
 	$(MAKE) --directory=actkbd clean
 
+# make clean all
 distclean-local: clean
-	rm -rf openswitcher*
+	find . -type d -name 'openswitcher*' -not -name 'openswitcher_include' -exec rm -rf {} +
 	rm -rf doc/html
 	rm -rf doc/docbook
 	rm -rf doc/searchdata.xml
 
+# make tarball
 $(PACKAGE_TARNAME)-$(VERSION).tar.gz: $(bin_PROGRAMS)
 	$(MAKE) dist
 

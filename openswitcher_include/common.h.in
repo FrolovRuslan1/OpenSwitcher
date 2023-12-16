@@ -1,0 +1,82 @@
+// If you read it you shold know that X11 is absolutely old shit please try support to develop new Window Maneger
+/*!
+	@file
+	@brief This is the common header file of OpenSwitcher project.
+
+	This header file helps to create another headers.
+*/
+#ifndef COMMON_H
+#define COMMON_H
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <unistd.h>
+#include <ctype.h>
+
+#include <fcntl.h>
+#include <errno.h>
+#include <time.h>
+#include <getopt.h>
+#include <pwd.h>
+
+
+#include <X11/Xlib.h>
+#include <X11/extensions/XTest.h>
+#include <X11/X.h>
+#include <X11/Xatom.h>
+#include <X11/keysym.h>
+
+#include <X11/XKBlib.h>
+
+#include <xkbcommon/xkbcommon.h>
+#include <xkbcommon/xkbcommon-x11.h>
+
+
+#include <unicode/ustring.h>
+#include <unicode/ucnv.h>
+#include <unicode/ustdio.h>
+#include <unicode/utf8.h>
+#include <unicode/uchar.h>
+#include <unicode/utypes.h>
+
+
+#include <linux/input-event-codes.h>
+#include <linux/input.h>
+#include <linux/keyboard.h>
+
+#include <sys/epoll.h>
+#include <sys/types.h>
+
+#include "config.h"
+#include <libconfig.h>
+#include <glib.h>
+
+struct Options
+{
+	int verbose_flag;
+	int debug_flag;
+	int emulate_flag;
+	int input_flag;
+	int output_flag;
+};
+
+struct Openswitcher
+{
+	struct Options options;
+	char *name;
+	char *version;
+	char *config_path;
+	char *actkbd_config_path;
+	char *input_device;
+	char *username;
+	char *home;
+	char *xdg_config_home;
+	char *shortcut;
+	config_t cfg;
+};
+
+extern struct Openswitcher openswitcher;
+
+#endif//COMMON_H

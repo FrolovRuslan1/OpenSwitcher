@@ -4,4 +4,4 @@
 
 xkb-switch -n
 sleep 1
-xsel -o | sudo -u "$SUDO_USER" sudo openswitcher --emulate 
+xsel -o | openswitcher --emulate 

@@ -1,0 +1,22 @@
+// If you read it you shold know that X11 is absolutely old shit please try support to develop new Window Maneger
+/*!
+	@file
+	@brief This is the main header file of OpenSwitcher project.
+
+	This file declares core functions for OpenSwitcher project such as
+	options_handler(), read_config() or setup()
+	and has struct Openswitcher for maintains state of program.
+*/
+#ifndef MAIN_H
+#define MAIN_H
+
+#include "common.h"
+#include "functional.h"
+#include "utilities.h"
+
+extern int options_handler(int argc, char * const argv[]);
+extern int read_config();
+extern int setup();
+
+
+#endif//MAIN_H

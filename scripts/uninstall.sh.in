@@ -27,7 +27,7 @@ grep -v "$default_autostart_actkbd" "$HOME_USER/.xinitrc" > "/tmp/.xinitrc.tmp" 
 echo "Removing OpenSwitcher config $XDG_CONFIG_HOME/openswitcher/config.cfg"
 sudo rm -rf "$XDG_CONFIG_HOME/openswitcher"
 
-# Removing bash, zsh , fish completions
+# Removing bash, zsh, fish completions
 echo "Removing bash completion /etc/bash_completion.d/openswitcher_autocomplete.sh"
 sudo rm -rf "/etc/bash_completion.d/openswitcher_autocomplete.sh"
 
@@ -61,4 +61,4 @@ fi
 
 # Stop actkbd
 echo "Stop actkbd."
-sudo killall actkbd
+sudo killall actkbd > /dev/null

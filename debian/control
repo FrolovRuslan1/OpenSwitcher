@@ -7,7 +7,7 @@ Build-Depends:
  debhelper-compat (= 13),
  autotools-dev,
  cmake, 
- xserver-xorg, libx11-dev, libxkbcommon-x11-dev, libxkbcommon-dev, libicu-dev, libconfig-dev
+ xserver-xorg, libx11-dev, libxkbcommon-x11-dev, libxkbcommon-dev, libicu-dev, libglib2.0-dev, libconfig-dev
 Standards-Version: 4.6.2
 Homepage: https://github.com/pulkras/OpenSwitcher/tree/test
 #Vcs-Browser: https://salsa.debian.org/debian/openswitcher

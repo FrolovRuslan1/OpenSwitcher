@@ -50,6 +50,7 @@ in `/etc/sudoers.d/openswitcher` for correct operation because it works on `evde
 4. `./configure`
 5. `make`
 6. `sudo make install OPENSWITCHER_LOCAL_INSTALL=1`
+7. `sudo openswitcher --run`
 
 ## Uninstall
 

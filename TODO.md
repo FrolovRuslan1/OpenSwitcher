@@ -22,8 +22,12 @@
  - [ ] maybe remake instaling process by using makefile.am
  - [x] CONTRIBUTING.md
  - [ ] need build GUI
- - [ ] need create OpenSwitcher config
+ - [x] need create OpenSwitcher config
  - [x] fix bug when alt+shift pressed, need more tests
  - [ ] add Wyaland support(xkb-switch doesnt work)
  - [x] use libconfig to write config
- - [ ] maybe move doxygen docs in main
+ - [x] add functions for simple adding actkbd shortcuts
+ - [ ] may be in a future add autamatic translate text
+ - [ ] check leak memory
+ - [ ] may be in a future add .so library
+ - [ ] add root user support

@@ -47,37 +47,41 @@ fi
 # install submodules
 if [[ $OPENSWITCHER_INSTALL_WITH_DPKG != 1 ]]; then
 	# install xkb-switch
-	echo "xkb-switch installing."
-	if which cmake >/dev/null; then
-		echo "cmake found"
-		cd xkb-switch/
-		mkdir -p build 
-		cd build
-		# cmake ..
-		# make
-		sudo make install
-		sudo ldconfig
-		cd ..
-		cd ..
+	if which xkb-switch >/dev/null; then
+		echo "xkb-switch exist"
 	else
-		echo "cmake not found, installation terminating."
-		exit 1
+		echo "xkb-switch installing."
+		if which cmake >/dev/null; then
+			echo "cmake found"
+			cd xkb-switch/build
+			sudo make install
+			sudo ldconfig
+			cd ..
+			cd ..
+		else
+			echo "cmake not found, installation terminating."
+			exit 1
+		fi
 	fi
+	
 
 	# install actkbd
-	echo "actkbd installing."
-	if sudo modprobe evdev >/dev/null; then
-		cd actkbd/
-		echo "evdev found"
-		# make
-		sudo make install
-		cd ../
+	if which actkbd >/dev/null; then
+		echo "actkbd exist"
 	else
-		echo "evdev not found, installation terminating."
-		exit 1
+		echo "actkbd installing."
+		if sudo modprobe evdev >/dev/null; then
+			cd actkbd
+			echo "evdev found"
+			sudo make install
+			cd ../
+		else
+			echo "evdev not found, installation terminating."
+			exit 1
+		fi
 	fi
+	
 fi
 
-openswitcher --run
 
 echo "Installation is complete."

@@ -27,5 +27,7 @@ _arguments -s \
 '--output[Enable standart output to get transformed input-event-codes.]' \
 '-e[Enable emulation mode. It emulates key presses of KeySyms input.]' \
 '--emulate[Enable emulation mode. It emulates key presses of KeySyms input.]' \
+'-b[Adding shortcut to actkbd config.]' \
+'--add-shortcut[Adding shortcut to actkbd config.]' \
 '--verbose[Enable verbose mode.]' \
 '--debug[Enable debug mode.]'
