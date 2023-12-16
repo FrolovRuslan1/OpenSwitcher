@@ -61,4 +61,6 @@ fi
 
 # Stop actkbd
 echo "Stop actkbd."
-sudo killall actkbd > /dev/null
+if pgrep actkbd > /dev/null; then
+    sudo killall actkbd > /dev/null
+fi

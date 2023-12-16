@@ -141,15 +141,7 @@ KeySym *transform_stdin_to_KeySyms(char *text)
 */
 int write_KeySym(int fd, KeySym keysym)
 {	
-	message("send KeySym");
-    Display* display = XOpenDisplay(NULL);
-    if (display == NULL)
-	{
-		debug("XOpenDisplay() error");
-		return -1;
-	}   
-
-    KeyCode keycode = XKeysymToKeycode(display, keysym);
+    KeyCode keycode = XKeysymToKeycode(openswitcher.display, keysym);
 	if (keycode == 0)
 	{
 		debug("XKeysymToKeycode() error");
@@ -158,12 +150,12 @@ int write_KeySym(int fd, KeySym keysym)
 
 
     // ---------------------------------------------------
-    char* keysymName = XKeysymToString(keysym);
-	if (keysymName == NULL)
-	{
-		debug("XKeysymToString() error");
-		return -1;
-	}  
+    // char* keysymName = XKeysymToString(keysym);
+	// if (keysymName == NULL)
+	// {
+	// 	debug("XKeysymToString() error");
+	// 	return -1;
+	// }  
 
     // message(keysymName);
 
@@ -181,18 +173,18 @@ int write_KeySym(int fd, KeySym keysym)
     if (u_isalpha(codepoint) && xkb_keysym_to_upper(keysym) == keysym)
     {
         // uppercase letter
-        write_key(fd, &ev, 1, XKeysymToKeycode(display, XK_Shift_L));
+        write_key(fd, &ev, 1, XKeysymToKeycode(openswitcher.display, XK_Shift_L));
         write_key(fd, &ev, 1, keycode);
-        write_key(fd, &ev, 0, XKeysymToKeycode(display, XK_Shift_L));
+        write_key(fd, &ev, 0, XKeysymToKeycode(openswitcher.display, XK_Shift_L));
         write_key(fd, &ev, 0, keycode);
 
     // if it is a sign and if it equals itself with shift pressed
-    } else if(!u_isalpha(codepoint) && KeyCodeToKeySym(display, keycode, event_mask) == keysym)
+    } else if(!u_isalpha(codepoint) && KeyCodeToKeySym(openswitcher.display, keycode, event_mask) == keysym)
     {
         // shift sign
-        write_key(fd, &ev, 1, XKeysymToKeycode(display, XK_Shift_L));
+        write_key(fd, &ev, 1, XKeysymToKeycode(openswitcher.display, XK_Shift_L));
         write_key(fd, &ev, 1, keycode);
-        write_key(fd, &ev, 0, XKeysymToKeycode(display, XK_Shift_L));
+        write_key(fd, &ev, 0, XKeysymToKeycode(openswitcher.display, XK_Shift_L));
         write_key(fd, &ev, 0, keycode);
     }else
     {
@@ -201,8 +193,6 @@ int write_KeySym(int fd, KeySym keysym)
         write_key(fd, &ev, 0, keycode);
     }
 	
-    close(fd);
-    XCloseDisplay(display);
 
     return 0;
 }

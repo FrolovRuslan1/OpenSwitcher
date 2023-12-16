@@ -13,8 +13,8 @@
 struct Openswitcher openswitcher = 
 {
 	.options = {
-		.verbose_flag = 1,
-		.debug_flag = 1,
+		.verbose_flag = 0,
+		.debug_flag = 0,
 		.emulate_flag = 0,
 		.input_flag = 0,
 		.output_flag = 0,
@@ -28,7 +28,8 @@ struct Openswitcher openswitcher =
 	.username = NULL,
 	.home = NULL,
 	.xdg_config_home = NULL,
-	.shortcut = NULL
+	.shortcut = NULL,
+	.display = NULL 
 };
 
 /*!
@@ -85,6 +86,13 @@ int main(int argc, char * const argv[])
 	{
 		if (num_events > 0)
 		message("Using input whithout input_flag");
+
+		openswitcher.display = XOpenDisplay(NULL);
+		if (openswitcher.display == NULL)
+		{
+			debug("XOpenDisplay() error");
+			return EXIT_FAILURE;
+		} 
 		
         char* text = read_text_from_stdin();
         if (text == NULL) 
@@ -114,14 +122,21 @@ int main(int argc, char * const argv[])
 		// 	return -1;
 		// }
 		int fd = open(openswitcher.input_device, O_WRONLY);
+		printf("openswitcher.input_device: %s\n", openswitcher.input_device);
 		if (fd == -1)
 		{
 			debug("open() error");
 			return EXIT_FAILURE;
 		}
+		message("write_KeySyms"); 
         for (int i = 0; i < length; i++) 
 		{
-            if (write_KeySym(fd, arr[i]) != 0) 
+			// if (usleep(50000))
+			// {
+			// 	debug("usleep() error");
+			// 	return -1;
+			// }
+            if (write_KeySym(fd, arr[i])) 
 			{
                 debug("write_KeySym() error");
                 return EXIT_FAILURE ;
@@ -131,6 +146,7 @@ int main(int argc, char * const argv[])
 		close(fd);
         free(text);
         free(arr);
+		XCloseDisplay(openswitcher.display);
     } else 
 	{
         message("No input data.");

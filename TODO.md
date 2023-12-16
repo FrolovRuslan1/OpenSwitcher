@@ -31,3 +31,4 @@
  - [ ] check leak memory
  - [ ] may be in a future add .so library
  - [ ] add root user support
+ - [ ] fix bug /dev/input/event0 => .dev.input.event0

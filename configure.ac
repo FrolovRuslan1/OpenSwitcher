@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.71])
 AC_ARG_WITH([x], [AS_HELP_STRING([--with-x=yes], [Enable feature X])])
-AC_INIT([OpenSwitcher],[1.0.1],[gald.rus@yandex.ru])
+AC_INIT([OpenSwitcher],[1.1.1],[gald.rus@yandex.ru])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
 AC_CONFIG_HEADERS([openswitcher_include/config.h])
 AC_SUBST([TODAY], [$(shell date +%Y-%m-%d)])

@@ -44,23 +44,25 @@ required_packages=("build-essential" "xserver-xorg" "libx11-dev" "libxkbcommon-x
 
 distro=$(cat /etc/os-release | grep -w ID | cut -d'=' -f2)
 
-config="# configration file used by openswitcher
-openswitcher:
-{
-	options:
+if which input-device-info.sh >/dev/null; then
+	config="# configration file used by openswitcher
+	openswitcher:
 	{
-		verbose_flag = false;
-		debug_flag = false;
-		emulate_flag = false;
-		input_flag = false;
-		output_flag = false;
-	};
-	name = \"openswitcher\";
-	version = \"@VERSION@\";
-	config_path = \"$XDG_CONFIG_HOME/openswitcher/config.cfg\";
-	actkbd_config_path = \"$XDG_CONFIG_HOME/actkbd/actkbd.conf\";
-	input_device = \"$(input-device-info.sh)\"
-	username = \"$OPENSWITCHERUSER\";
-	home = \"$HOME_USER\"
-	xdg_config_home = \"$XDG_CONFIG_HOME\";
-};"
+		options:
+		{
+			verbose_flag = false;
+			debug_flag = false;
+			emulate_flag = false;
+			input_flag = false;
+			output_flag = false;
+		};
+		name = \"openswitcher\";
+		version = \"@VERSION@\";
+		config_path = \"$XDG_CONFIG_HOME/openswitcher/config.cfg\";
+		actkbd_config_path = \"$XDG_CONFIG_HOME/actkbd/actkbd.conf\";
+		input_device = \"$(input-device-info.sh)\"
+		username = \"$OPENSWITCHERUSER\";
+		home = \"$HOME_USER\"
+		xdg_config_home = \"$XDG_CONFIG_HOME\";
+	};"
+fi

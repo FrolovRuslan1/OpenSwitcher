@@ -74,6 +74,7 @@ struct Openswitcher
 	char *home;
 	char *xdg_config_home;
 	char *shortcut;
+	Display *display;
 	config_t cfg;
 };
 
